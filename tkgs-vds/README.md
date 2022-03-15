@@ -54,73 +54,81 @@ The script will run for approximately 40 minutes.
 
 **Important:** the vCenter install will fail if you are on the VMware VPN!
 
-
 ## Procedure Part 2: Enable Kubernetes with Tanzu Service Installer
+
+### About Tanzu Service Installer
+
+Tanzu Service Installer (a.k.a "arcas") is a VMware internal tool that automates many of the aspects of enabling workload management
+in vSphere (a.k.a vSphere with Tanzu", a.k.a. Tanzu Kubernetes Grid Service - or TKGS).
+
+Arcas runs in a purpose built VM that is installed in vSphere. It is installed via an OVA downloaded from the VMware marketplace.
+
+Arcas automates many of the tedious tasks with enabling vSphere with Tanzu - most notably the configuration of NSX
+Advanced Load Balancer. But arcas is not very opinionated about how your Kubernetes environment and your networks are
+designed. This means that you must still think deeply about network and cluster design. I will discuss how the networks
+are designed in my home lab.
 
 ### Network Design
 
-TKGs uses three types of networks - management, workload, and VIP networks. This installation is based on the
-two network model for TKGs - where the workload and VIP networks share the same subnet. When designing
-a Kubernetes environment it is also important to be mindful for the netowrks that exist inside a Kubernetes cluster - those
-networks cannot overlap each other, and should not overlap with other networks in use.
-The table below shows the network design for TKGs in my home lab:
+TKGs uses three types of networks - management, workload, and VIP networks. This installation is based
+on the two subnet model for TKGs - where the workload and VIP networks share the same subnet.
 
-| Network      | Item                         | IP or Range         |
-|--------------|------------------------------|---------------------|
-| Management   | vcsa.tkgs.tanzuathome.net    | 192.168.138.3       |
-| Management   | esxi-1.tkgs.tanzuathome.net  | 192.168.138.4       |
-| Management   | esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
-| Management   | esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
-| Management   | nsx-alb.tkgs.tanzuathome.net | 192.168.138.9       |
-| Management   | NSX Service Engines          | 192.168.138.180-187 |
-| Management   | Start of 5 Address Range     | 192.168.138.190     |
-| VIP          | VIP Network Range            | 192.168.139.2-126   |
-| Workload     | Workload Network Range       | 192.168.139.128-254 |
-| K8S Internal | Supervisor Service CIDR      | 10.113.0.0/16       |
-| K8S Internal | POD CIDR                     | 10.96.0.0/12        |
-| K8S Internal | Service CIDR                 | 10.112.0.0/16       |
+When designing a Kubernetes environment it is also important to be mindful for the networks that exist inside
+a Kubernetes cluster - those networks cannot overlap each other, and should not overlap with other
+networks in use. The table below shows the network design for TKGs in my home lab:
+
+| Network      | vSphere Port Group            | Item                         | IP or Range         |
+|--------------|-------------------------------|------------------------------|---------------------|
+| Management   | Supervisor-Management-Network | vcsa.tkgs.tanzuathome.net    | 192.168.138.3       |
+| Management   | Supervisor-Management-Network | esxi-1.tkgs.tanzuathome.net  | 192.168.138.4       |
+| Management   | Supervisor-Management-Network | esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
+| Management   | Supervisor-Management-Network | esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
+| Management   | Supervisor-Management-Network | nsx-alb.tkgs.tanzuathome.net | 192.168.138.9       |
+| Management   | Supervisor-Management-Network | NSX Service Engines          | 192.168.138.180-187 |
+| Management   | Supervisor-Management-Network | Start of 5 Address Range     | 192.168.138.190     |
+| VIP          | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
+| Workload     | Workload-VIP-Network          | Workload Network Range       | 192.168.139.128-254 |
+| K8S Internal | N/A                           | Supervisor Service CIDR      | 10.113.0.0/16       |
+| K8S Internal | N/A                           | POD CIDR                     | 10.96.0.0/12        |
+| K8S Internal | N/A                           | Service CIDR                 | 10.112.0.0/16       |
 
 
-
-
-### Data Collector
+### Tanzu Service Installer as a Data Collector
 
 When you run the service installer, you will need to supply many configuration variables. These are the same variables you will
-need when installing TKGs in a customer environment - so you can think if the service installer as a "data collector" for
-configuration variables you will need. These are the important configuration variables in use in my environment (not all variables
-are listed below):
+need when installing TKGs in a customer environment - so you can think if the service installer as a kind of "data collector" for
+configuration variables you will need.
 
-| Configuration Setting | Value | Notes |
-|---|---|---|
-| **Infrastructure Section** |
-| DNS | 192.168.128.1 | DNS in my network |
-| DNS Search Domain | tkgs.tanzuathome.net |  |
-| NTP Servers | pool.ntp.org |  |
-| **IaaS Provider Section** |
-| Download NSX ALB | Off | We will use the AVI OVA Uploaded by Powershell |
-| vCenter Server | vcsa.tkgs.tanzuathome.net | This is the nested vCenter created by Powershell |
-| Content Library | AVI | This is the content library created by Powershell |
-| AVI OVA Image | controller-21.1.1-9045 | This is the AVI OVA uploaded by Powershell |
-| **VMware NSX Advanced Load Balancer Section** |
-| AVI FQDN | nsx-alb.tkgs.tanzuathome.net | DNS Entry from Above |
-| AVI Controller IP | 192.168.138.9 | DNS Entry from Above |
-| Management Network Segment | Supervisor-Management-Network | |
-| Management Gateway CIDR | 192.168.138.1/24 | |
-
-
-
-
-
-
+The file `vsphere.json` in this folder contains the output from running arcas with the configuration variables
+that are appropriate for my home lab.
 
 ### Run the Service Installer
 
-1. Login to the new vCenter (https://vcsa.tkgs.tanzuathome.net/ui) (administrator@vsphere.local/VMware1!)
+1. Download and deploy the OVA for service installer in your vCenter. You can use either the outer vCenter, or the
+   nested vCenter.
+1. Access the service installer user interface via a browser. It is available on port 8888 of the VM. For me, this is
+   http://192.168.128.23:8888
+1. Arcas can create configurations for several different types of vSphere installs. These instructions are based on
+   Deploying TKGS with "VMware vSphere with DVS"
+1. Start the wizard for TKGS and enter the appropriate values for your installation (see `vsphere.json` in this folder for
+   an example)
+1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere.json`
 1. SSH into the Service Installer VM (ssh root@192.168.128.23) password is: TaB5!@9Y
+1. Run the following command:
 
-arcas --env vsphere --file /opt/vmware/arcas/src/vsphere.json --avi_configuration \
-  --avi_wcp_configuration --enable_wcp --create_supervisor_namespace \
-  --create_workload_cluster
+   ```shell
+   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere.json --avi_configuration \
+      --avi_wcp_configuration --enable_wcp --create_supervisor_namespace \
+      --create_workload_cluster
+   ```
+
+1. Using the valuse I supplied, this will do the following:
+
+   - Install and configure NSX Advanced Load Balancer
+   - Enable Workload Managment (Kubernetes)
+   - Create a namespace
+   - Create a workload cluster
+
 
 ## Resources
 
