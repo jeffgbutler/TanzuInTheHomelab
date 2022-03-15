@@ -7,7 +7,7 @@ VMware PowerCLI to make this work: https://developer.vmware.com/powercli
 
 | Environment | Automation |
 |---|---|
-| [TKGs and NSX Advanced Load Balancer](tkgs-dvs) | Powershell script and Tanzu Service Installer |
+| [TKGs and NSX Advanced Load Balancer](tkgs-vds) | Powershell script and Tanzu Service Installer |
 
 ## My Home Lab Environment
 
