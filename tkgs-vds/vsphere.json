@@ -74,18 +74,22 @@
 			"tkgs-vsphere-namespace-workload-network": "Workload-VIP-Network",
 			"tkgs-vsphere-namespace-content-library": "",
 			"tkgs-vsphere-namespace-vm-classes": [
+				"best-effort-2xlarge",
+				"best-effort-4xlarge",
+				"best-effort-8xlarge",
+				"best-effort-large",
 				"best-effort-medium",
 				"best-effort-small",
-				"guaranteed-small",
-				"guaranteed-large",
 				"best-effort-xlarge",
-				"guaranteed-xlarge",
-				"best-effort-2xlarge",
-				"guaranteed-xsmall",
+				"best-effort-xsmall",
+				"guaranteed-2xlarge",
 				"guaranteed-4xlarge",
 				"guaranteed-8xlarge",
-				"best-effort-4xlarge",
-				"best-effort-large"
+				"guaranteed-large",
+				"guaranteed-medium",
+				"guaranteed-small",
+				"guaranteed-xlarge",
+				"guaranteed-xsmall"
 			],
 			"tkgs-vsphere-namespace-resource-spec": {},
 			"tkgs-vsphere-namespace-storage-spec": [
@@ -95,7 +99,7 @@
 			],
 			"tkgs-vsphere-workload-cluster-spec": {
 				"tkgs-vsphere-namespace-name": "test-namespace",
-				"tkgs-vsphere-workload-cluster-name": "workload-cluster",
+				"tkgs-vsphere-workload-cluster-name": "dev-cluster",
 				"allowed-storage-classes": [
 					"tanzu-gold-storage-policy"
 				],

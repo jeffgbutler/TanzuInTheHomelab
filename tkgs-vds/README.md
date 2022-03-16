@@ -113,7 +113,7 @@ that are appropriate for my home lab.
 1. Start the wizard for TKGS and enter the appropriate values for your installation (see `vsphere.json` in this folder for
    an example)
 1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere.json`
-1. SSH into the Service Installer VM (ssh root@192.168.128.23) password is: TaB5!@9Y
+1. SSH into the Service Installer VM (ssh root@192.168.128.23). The password is in the Arcas FAQ (see resources below).
 1. Run the following command:
 
    ```shell
@@ -122,13 +122,12 @@ that are appropriate for my home lab.
       --create_workload_cluster
    ```
 
-1. Using the valuse I supplied, this will do the following:
+1. Using the values I supplied, this will do the following:
 
    - Install and configure NSX Advanced Load Balancer
    - Enable Workload Managment (Kubernetes)
-   - Create a namespace
-   - Create a workload cluster
-
+   - Create a namespace called "test-namespace"
+   - Create a workload cluster called "dev-cluster"
 
 ## Resources
 
