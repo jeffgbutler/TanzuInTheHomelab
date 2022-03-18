@@ -16,7 +16,7 @@ This nested environment is created in two steps:
 ### Downloads
 
 1. ESXi
-   - Download the latest nested ESXi appliance from WIlliam Lam: https://williamlam.com/nested-virtualization/nested-esxi-virtual-appliance
+   - Download the latest nested ESXi appliance from William Lam: https://williamlam.com/nested-virtualization/nested-esxi-virtual-appliance
    - Update the `$NestedESXiApplianceOVA` script variable with the location of the downloaded OVA
 1. vCenter
    - Download the vCenter server appliance ISO from my.vmware.com or buildweb.vmware.com (internal)
@@ -30,7 +30,7 @@ This nested environment is created in two steps:
 
 ## Procedure Part 1: Nested Infrastructure
 
-Run the script `nestedEsxiForTKGs.ps1`. This will create a new vCenter with three nested ESXi hosts.
+The Powershell script `nestedEsxiForTKGs.ps1` in this folder will create a nested vSphere environment for installing TKGs.
 
 There are a large set of variables at the beginning of this script that define the nested environment. The most
 important of these are the IP addresses, domain names, and network names from the outer vCenter. The values in the script
@@ -42,15 +42,16 @@ are based on my home lab network. I am using two VLANs - `vm-network-138` and `v
  Before running the script, you should create DNS entries to match entries in the script. In my environment, I use
  the following DNS records:
 
-| Name                         | Address         |
-|------------------------------|-----------------|
-| vcsa.tkgs.tanzuathome.net    | 192.168.138.3   |
-| esxi-1.tkgs.tanzuathome.net  | 192.168.138.4   |
-| esxi-2.tkgs.tanzuathome.net  | 192.168.138.5   |
-| esxi-3.tkgs.tanzuathome.net  | 192.168.138.6   |
-| nsx-alb.tkgs.tanzuathome.net | 192.168.138.9   |
+| Name                              | Address         |
+|-----------------------------------|-----------------|
+| vcsa.tkgs.tanzuathome.net         | 192.168.138.3   |
+| tkgs-esxi-1.tkgs.tanzuathome.net  | 192.168.138.4   |
+| tkgs-esxi-2.tkgs.tanzuathome.net  | 192.168.138.5   |
+| tkgs-esxi-3.tkgs.tanzuathome.net  | 192.168.138.6   |
+| nsx-alb.tkgs.tanzuathome.net      | 192.168.138.9   |
 
-The script will run for approximately 40 minutes.
+After the script variables have been set and the DNS entries creatred, run the script `nestedEsxiForTKGs.ps1`.
+This will create a new vCenter with three nested ESXi hosts. The script will run for approximately 40 minutes.
 
 **Important:** the vCenter install will fail if you are on the VMware VPN!
 

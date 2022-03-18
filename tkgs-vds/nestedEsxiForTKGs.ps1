@@ -15,9 +15,9 @@ $NSXAdvLBOVA = "/Users/jeffbutler/NestedVCF/controller-21.1.1-9045.ova"
 
 # Nested ESXi VMs to deploy
 $NestedESXiHostnameToIPs = @{
-    "esxi-1" = "192.168.138.4"
-    "esxi-2" = "192.168.138.5"
-    "esxi-3" = "192.168.138.6"
+    "tkgs-esxi-1" = "192.168.138.4"
+    "tkgs-esxi-2" = "192.168.138.5"
+    "tkgs-esxi-3" = "192.168.138.6"
 }
 
 # Nested ESXi VM Resources
