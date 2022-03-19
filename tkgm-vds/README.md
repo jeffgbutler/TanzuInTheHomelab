@@ -4,12 +4,13 @@ Instructions for installing Tanzu Kubernetes Grid (TKGm) with NSX Advanced Load 
 
 This nested environment is created in two steps:
 
-1. Run a Powershell script to create a nested vCenter. The nested vCenter has these attributes:
+1. Run a PowerShell script to create a nested vCenter. The nested vCenter has these attributes:
    - 3 nested ESXi Hosts
-   - 2 Portgroups mapped to VLANs in the outer vCenter
+   - 4 Portgroups mapped to VLANs in the outer vCenter
    - A Shared VSAN data store
-   - A Content library containing the AVI controller OVA
 1. Use the Tanzu Service Installer (a.k.a. Arcas) to enable and configure TKGm in the nested vCenter
+
+These instructions will assume that you can provide a VMware marketplace token for downloading components of TKGm.
 
 ## Prerequisites
 
@@ -24,18 +25,14 @@ This nested environment is created in two steps:
    - Update the `$VCSAInstallerPath` script variable with the location of the directory
    - If you are on a Mac, disable gatekeeper with a command similar to the following:
      `sudo xattr -r -d com.apple.quarantine VMware-VCSA-all-7.0.3-19234570`
-1. NSX Advanced LoadBalancer (aka AVI Vantage)
-   - Download NSX ALB from https://portal.avipulse.vmware.com/software/vantage
-   - Update the `$NSXAdvLBOVA` script variable with the location of the downloaded OVA
 
 ## Procedure Part 1: Nested Infrastructure
 
-The Powershell script `nestedEsxiForTKGm.ps1` in this folder will create a nested vSphere environment for installing TKGs.
+The PowerShell script `nestedEsxiForTKGm.ps1` in this folder will create a nested vSphere environment for installing TKGs.
 
 There are a large set of variables at the beginning of this script that define the nested environment. The most
 important of these are the IP addresses, domain names, and network names from the outer vCenter. The values in the script
-are based on my home lab network. I am using two VLANs - `vm-network-133` and `vm-network-136` - with CIDRs `192.168.133.0/24`
-and `192.168.136.0/24` - respectively. The `vm-network-133` VLAN also has DHCP enabled - which is a requirement for TKGm.
+are based on my home lab network. I am using four VLANs - two of which have DHCP enabled which is a requirement for TKGm.
 In your environment you may need to change these values. You will also see multiple references to a domain `tanzuathome.net`
 that I own. You should change these values to match a domain that you control, and where you can manage DNS entries.
 

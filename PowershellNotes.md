@@ -1,6 +1,8 @@
 # Powershell Notes
 
-Usefull Powershell commands
+Scripts in this repository use Powershell and the VMware PowerCLI plugin. More information
+about PowerCLI is here: https://developer.vmware.com/powercli
+
 
 ## Basic Check
 
@@ -35,7 +37,7 @@ Get-Module -Name VMware.* | Select-Object -Property Name,Version
 
 ## Alow Self-Signed Certificates
 
-Homelab servers typically do not have valid certificates. This will allow powershell to
+Homelab servers typically do not have valid certificates. This will allow PowerCLI to
 interact with these servers:
 
 ```powershell
