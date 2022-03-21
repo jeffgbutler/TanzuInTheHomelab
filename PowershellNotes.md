@@ -17,10 +17,24 @@ Disconnect-VIServer
 
 Connect to any vCenter. If the second command works, you are good to go.
 
+## Display All Available Versions
+
+```powershell
+Find-Module -Name VMware.PowerCLI -AllVersions
+```
+
 ## Install PowerCLI
+
+Install the latest version:
 
 ```powershell
 Install-Module -Name VMware.PowerCLI
+```
+
+Install a specific version:
+
+```powershell
+Install-Module -Name VMware.PowerCLI -RequiredVersion 12.0.0.15947286
 ```
 
 ## Update PowerCLI
@@ -29,10 +43,16 @@ Install-Module -Name VMware.PowerCLI
 Update-Module -Name VMware.PowerCLI
 ```
 
+## Uninstall PowerCLI
+
+```powershell
+Get-Module VMware.* -ListAvailable | Uninstall-Module -Force
+```
+
 ## Display PowerCLI Version
 
 ```powershell
-Get-Module -Name VMware.* | Select-Object -Property Name,Version
+Get-Module -Name VMware.* -ListAvailable | Select-Object -Property Name,Version
 ```
 
 ## Alow Self-Signed Certificates
