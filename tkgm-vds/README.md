@@ -135,7 +135,7 @@ that are appropriate for my home lab.
      --avi_configuration --tkg_mgmt_configuration \
      --shared_service_configuration --workload_preconfig --workload_deploy --deploy_extensions
    ```
-1. Using the valuse I supplied, this will do the following:
+1. Using the values I supplied, this will do the following:
 
    - Install and configure NSX Advanced Load Balancer
    - Enable Workload Managment (Kubernetes)
@@ -152,3 +152,5 @@ Arcas FAQ: https://vault.vmware.com/group/vault-main-library/document-preview/-/
 ## Troubleshooting
 
 Arcas Logging is in the Arcas VM at /var/log/server
+
+Follow progress in the Arcas VM: `journalctl -u arcas.service --follow`

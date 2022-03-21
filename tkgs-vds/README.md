@@ -151,3 +151,5 @@ Arcas FAQ: https://vault.vmware.com/group/vault-main-library/document-preview/-/
 ## Troubleshooting
 
 Arcas Logging is in the Arcas VM at /var/log/server
+
+Follow progress in the Arcas VM: `journalctl -u arcas.service --follow`
