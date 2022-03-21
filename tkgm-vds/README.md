@@ -131,11 +131,10 @@ that are appropriate for my home lab.
 1. Run the following command:
 
    ```shell
-   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere.json --avi_configuration \
+   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere.json \
      --avi_configuration --tkg_mgmt_configuration \
      --shared_service_configuration --workload_preconfig --workload_deploy --deploy_extensions
    ```
-
 1. Using the valuse I supplied, this will do the following:
 
    - Install and configure NSX Advanced Load Balancer
