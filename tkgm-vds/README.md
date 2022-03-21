@@ -149,6 +149,8 @@ Vault page: https://vault.vmware.com/group/vault-main-library/service-installer-
 
 Arcas FAQ: https://vault.vmware.com/group/vault-main-library/document-preview/-/document_library/6KC5yhh3TpWl/view_file/72967477
 
+Orf Gelbrich's repo: https://github.com/ogelbric/Arcas
+
 ## Troubleshooting
 
 Arcas Logging is in the Arcas VM at /var/log/server
