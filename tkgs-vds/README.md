@@ -130,6 +130,18 @@ that are appropriate for my home lab.
    - Create a namespace called "test-namespace"
    - Create a workload cluster called "dev-cluster"
 
+### Test the Workload Cluster
+
+```
+kubectl vsphere login --server 192.168.139.4 --tanzu-kubernetes-cluster-namespace test-namespace \
+  --tanzu-kubernetes-cluster-name dev-cluster -u administrator@vsphere.local \
+  --insecure-skip-tls-verify
+
+kubectl run kuard --restart=Never --image=gcr.io/kuar-demo/kuard-amd64:blue
+
+kubectl expose pod kuard --type=LoadBalancer --port=80 --target-port=8080
+```
+
 ## Resources
 
 Vault page: https://vault.vmware.com/group/vault-main-library/service-installer-for-vmware-tanzu
