@@ -169,7 +169,9 @@ arcas to automate the process. We'll use arcas.
 
 ### Test the Workload Cluster
 
-Once the workload cluster is up and running, 
+Once the workload cluster is up and running, you can find the server address by navigating to the "test-namespace"
+in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.3".
+
 ```
 kubectl vsphere login --server 192.168.139.3 --tanzu-kubernetes-cluster-namespace test-namespace \
   --tanzu-kubernetes-cluster-name dev-cluster -u administrator@vsphere.local \
