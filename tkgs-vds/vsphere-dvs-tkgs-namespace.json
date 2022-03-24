@@ -1,0 +1,129 @@
+{
+	"envSpec": {
+		"envType": "tkgs-ns",
+		"vcenterDetails": {
+			"vcenterAddress": "vcsa.tkgs.tanzuathome.net",
+			"vcenterSsoUser": "administrator@vsphere.local",
+			"vcenterSsoPasswordBase64": "Vk13YXJlMSE=",
+			"vcenterDatacenter": "Tanzu-Datacenter",
+			"vcenterCluster": "Workload-Cluster"
+		},
+		"saasEndpoints": {
+			"tmcDetails": {
+				"tmcAvailability": "false",
+				"tmcRefreshToken": "",
+				"tmcSupervisorClusterName": ""
+			},
+			"tanzuObservabilityDetails": {
+				"tanzuObservabilityAvailability": "false",
+				"tanzuObservabilityUrl": "",
+				"tanzuObservabilityRefreshToken": ""
+			}
+		}
+	},
+	"tkgsComponentSpec": {
+		"tkgsWorkloadNetwork": {
+			"tkgsWorkloadNetworkName": "network-1",
+			"tkgsWorkloadPortgroupName": "",
+			"tkgsWorkloadNetworkGatewayCidr": "",
+			"tkgsWorkloadNetworkStartRange": "",
+			"tkgsWorkloadNetworkEndRange": "",
+			"tkgsWorkloadServiceCidr": ""
+		},
+		"tkgsVsphereNamespaceSpec": {
+			"tkgsVsphereNamespaceName": "test-namespace",
+			"tkgsVsphereNamespaceDescription": "",
+			"tkgsVsphereNamespaceContentLibrary": "SubscribedAutomation-Lib",
+			"tkgsVsphereNamespaceVmClasses": [
+				"best-effort-small",
+				"guaranteed-medium",
+				"best-effort-large",
+				"best-effort-xsmall",
+				"guaranteed-small",
+				"guaranteed-large",
+				"best-effort-medium",
+				"guaranteed-xsmall"
+			],
+			"tkgsVsphereNamespaceResourceSpec": {},
+			"tkgsVsphereNamespaceStorageSpec": [
+				{
+					"storagePolicy": "tanzu-gold-storage-policy"
+				}
+			],
+			"tkgsVsphereWorkloadClusterSpec": {
+				"tkgsVsphereNamespaceName": "test-namespace",
+				"tkgsVsphereWorkloadClusterName": "dev-cluster",
+				"tkgsVsphereWorkloadClusterVersion": "v1.21.6+vmware.1-tkg.1",
+				"allowedStorageClasses": [
+					"tanzu-gold-storage-policy"
+				],
+				"defaultStorageClass": "tanzu-gold-storage-policy",
+				"nodeStorageClass": "tanzu-gold-storage-policy",
+				"serviceCidrBlocks": "10.128.0.0/16",
+				"podCidrBlocks": "10.112.0.0/12",
+				"controlPlaneVmClass": "best-effort-medium",
+				"workerVmClass": "best-effort-medium",
+				"workerNodeCount": "3",
+				"enableControlPlaneHa": "false",
+				"tkgWorkloadTsmIntegration": "false",
+				"namespaceExclusions": {
+					"exactName": "",
+					"startsWith": ""
+				}
+			}
+		}
+	},
+	"harborSpec": {
+		"enableHarborExtension": "false",
+		"harborFqdn": "",
+		"harborPasswordBase64": "",
+		"harborCertPath": "",
+		"harborCertKeyPath": ""
+	},
+	"tanzuExtensions": {
+		"enableExtensions": "false",
+		"tkgClustersName": "",
+		"logging": {
+			"syslogEndpoint": {
+				"enableSyslogEndpoint": "false",
+				"syslogEndpointAddress": "",
+				"syslogEndpointPort": "",
+				"syslogEndpointMode": "",
+				"syslogEndpointFormat": ""
+			},
+			"httpEndpoint": {
+				"enableHttpEndpoint": "false",
+				"httpEndpointAddress": "",
+				"httpEndpointPort": "",
+				"httpEndpointUri": "",
+				"httpEndpointHeaderKeyValue": ""
+			},
+			"elasticSearchEndpoint": {
+				"enableElasticSearchEndpoint": "false",
+				"elasticSearchEndpointAddress": "",
+				"elasticSearchEndpointPort": ""
+			},
+			"kafkaEndpoint": {
+				"enableKafkaEndpoint": "false",
+				"kafkaBrokerServiceName": "",
+				"kafkaTopicName": ""
+			},
+			"splunkEndpoint": {
+				"enableSplunkEndpoint": "false",
+				"splunkEndpointAddress": "",
+				"splunkEndpointPort": "",
+				"splunkEndpointToken": ""
+			}
+		},
+		"monitoring": {
+			"enableLoggingExtension": "false",
+			"prometheusFqdn": "",
+			"prometheusCertPath": "",
+			"prometheusCertKeyPath": "",
+			"grafanaFqdn": "",
+			"grafanaCertPath": "",
+			"grafanaCertKeyPath": "",
+			"grafanaPasswordBase64": ""
+		}
+	}
+}

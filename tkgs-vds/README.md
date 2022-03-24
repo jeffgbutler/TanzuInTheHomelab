@@ -25,7 +25,7 @@ This nested environment is created in two steps:
    - If you are on a Mac, disable gatekeeper with a command similar to the following:
      `sudo xattr -r -d com.apple.quarantine VMware-VCSA-all-7.0.3-19234570`
 1. NSX Advanced LoadBalancer (aka AVI Vantage)
-   - Download NSX ALB from https://portal.avipulse.vmware.com/software/vantage
+   - Download NSX ALB from https://customerconnect.vmware.com/downloads/details?downloadGroup=NSX-ALB-10-NDC&productId=1092
    - Update the `$NSXAdvLBOVA` script variable with the location of the downloaded OVA
 
 ## Procedure Part 1: Nested Infrastructure
@@ -69,6 +69,13 @@ Advanced Load Balancer. But arcas is not very opinionated about how your Kuberne
 designed. This means that you must still think deeply about network and cluster design. I will discuss how the networks
 are designed in my home lab.
 
+For a TKGs installation, arcas provides two options:
+
+1. Basic configuration and enablement of WCP (the Tanzu service in vSphere)
+2. Create a workload namespace and workload cluster
+
+We will show examples of using both.
+
 ### Network Design
 
 TKGs uses three types of networks - management, workload, and VIP networks. This installation is based
@@ -89,9 +96,9 @@ networks in use. The table below shows the network design for TKGs in my home la
 | Management   | Supervisor-Management-Network | Start of 5 Address Range     | 192.168.138.190     |
 | VIP          | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
 | Workload     | Workload-VIP-Network          | Workload Network Range       | 192.168.139.128-254 |
-| K8S Internal | N/A                           | Supervisor Service CIDR      | 10.113.0.0/16       |
-| K8S Internal | N/A                           | POD CIDR                     | 10.96.0.0/12        |
-| K8S Internal | N/A                           | Service CIDR                 | 10.112.0.0/16       |
+| K8S Internal | N/A                           | Supervisor Service CIDR      | 10.96.0.0/22        |
+| K8S Internal | N/A                           | POD CIDR                     | 10.112.0.0/12       |
+| K8S Internal | N/A                           | Service CIDR                 | 10.128.0.0/16       |
 
 
 ### Tanzu Service Installer as a Data Collector
@@ -100,40 +107,71 @@ When you run the service installer, you will need to supply many configuration v
 need when installing TKGs in a customer environment - so you can think if the service installer as a kind of "data collector" for
 configuration variables you will need.
 
-The file `vsphere.json` in this folder contains the output from running arcas with the configuration variables
+The file `vsphere-dvs-tkgs-wcp.json` in this folder contains the output from running arcas with the configuration variables
 that are appropriate for my home lab.
 
-### Run the Service Installer
+### Install and Start the Service Installer
 
-1. Download and deploy the OVA for service installer in your vCenter. You can use either the outer vCenter, or the
-   nested vCenter.
+1. Download the OVA for service installer from the VMware marketplace
+1. Deploy the OVA in your vCenter. You can use either the outer vCenter, or the nested vCenter. Configuration values
+   for the OVA:
+   - NTP Server: `pool.ntp.org`
+   - Root password: `VMware1!`
+   - Leave all the netowrk fields blank if you picked a netowrk with DHCP enabled, else enter appropriate values for your network
+1. Power on the VM
 1. Access the service installer user interface via a browser. It is available on port 8888 of the VM. For me, this is
-   http://192.168.128.23:8888
+   http://192.168.128.28:8888
+
+### Configuration Step 1: AVI and WCP
+
 1. Arcas can create configurations for several different types of vSphere installs. These instructions are based on
-   Deploying TKGS with "VMware vSphere with DVS"
-1. Start the wizard for TKGS and enter the appropriate values for your installation (see `vsphere.json` in this folder for
+   Deploying "Tanzu on VMware vSphere with DVS"
+1. Start the wizard for "Tanzu on VMware vSphere with DVS"
+1. Select Deployment type "Enable Workload Control Plane", then select "Configure and Generate JSON"
+1. Enter the appropriate values for your installation (see `vsphere-dvs-tkgs-wcp.json` in this folder for
    an example)
-1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere.json`
-1. SSH into the Service Installer VM (ssh root@192.168.128.23). The password is in the Arcas FAQ (see resources below).
+1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json`
+1. SSH into the Service Installer VM (ssh root@192.168.128.28).
 1. Run the following command:
 
    ```shell
-   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere.json --avi_configuration \
-      --avi_wcp_configuration --enable_wcp --create_supervisor_namespace \
-      --create_workload_cluster
+   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json \
+      --avi_configuration --avi_wcp_configuration --enable_wcp
    ```
 
 1. Using the values I supplied, this will do the following:
 
    - Install and configure NSX Advanced Load Balancer
    - Enable Workload Managment (Kubernetes)
+
+### Configuration Step 2: Workload Namespace and Cluster
+
+Once WCP is enabled you can create a namespace and workload cluster through the normal methods with TKGs or you can use
+arcas to automate the process. We'll use arcas.
+
+1. Start the wizard for "Tanzu on VMware vSphere with DVS"
+1. Select Deployment type "Namespace and Workload Cluster", then select "Configure and Generate JSON"
+1. Enter the appropriate values for your installation (see `vsphere-dvs-tkgs-namespace.json` in this folder for
+   an example)
+1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json`
+1. SSH into the Service Installer VM (ssh root@192.168.128.28).
+1. Run the following command:
+
+   ```shell
+   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json \
+      --create_supervisor_namespace --create_workload_cluster --deploy_extensions
+   ```
+
+1. Using the values I supplied, this will do the following:
+
    - Create a namespace called "test-namespace"
    - Create a workload cluster called "dev-cluster"
 
 ### Test the Workload Cluster
 
+Once the workload cluster is up and running, 
 ```
-kubectl vsphere login --server 192.168.139.4 --tanzu-kubernetes-cluster-namespace test-namespace \
+kubectl vsphere login --server 192.168.139.3 --tanzu-kubernetes-cluster-namespace test-namespace \
   --tanzu-kubernetes-cluster-name dev-cluster -u administrator@vsphere.local \
   --insecure-skip-tls-verify
 
@@ -141,6 +179,9 @@ kubectl run kuard --restart=Never --image=gcr.io/kuar-demo/kuard-amd64:blue
 
 kubectl expose pod kuard --type=LoadBalancer --port=80 --target-port=8080
 ```
+
+After this, you should be able to hit kuard at the IP exposed by the load balancer. You can retrive the IP address with this
+command: `kubectl get svc kuard`. Hit Kuard with the external-ip, for me it was http://192.168.139.7
 
 ## Resources
 

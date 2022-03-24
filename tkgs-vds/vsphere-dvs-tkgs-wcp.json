@@ -1,0 +1,84 @@
+{
+	"envSpec": {
+		"envType": "tkgs-wcp",
+		"vcenterDetails": {
+			"vcenterAddress": "vcsa.tkgs.tanzuathome.net",
+			"vcenterSsoUser": "administrator@vsphere.local",
+			"vcenterSsoPasswordBase64": "Vk13YXJlMSE=",
+			"vcenterDatacenter": "Tanzu-Datacenter",
+			"vcenterCluster": "Workload-Cluster",
+			"vcenterDatastore": "vsanDatastore",
+			"contentLibraryName": "AVI",
+			"aviOvaName": "controller-20.1.7-9154"
+		},
+		"marketplaceSpec": {
+			"refreshToken": ""
+		},
+		"saasEndpoints": {
+			"tmcDetails": {
+				"tmcAvailability": "false",
+				"tmcRefreshToken": "",
+				"tmcSupervisorClusterName": ""
+			}
+		},
+		"infraComponents": {
+			"dnsServersIp": "192.168.128.1",
+			"searchDomains": "tkgs.tanzuathome.net",
+			"ntpServers": "pool.ntp.org"
+		}
+	},
+	"tkgsComponentSpec": {
+		"controlPlaneSize": "SMALL",
+		"aviMgmtNetwork": {
+			"aviMgmtNetworkName": "Supervisor-Management-Network",
+			"aviMgmtNetworkGatewayCidr": "192.168.138.1/24",
+			"aviMgmtServiceIpStartRange": "192.168.138.180",
+			"aviMgmtServiceIpEndRange": "192.168.138.187"
+		},
+		"aviComponents": {
+			"aviPasswordBase64": "Vk13YXJlMSE=",
+			"aviBackupPassphraseBase64": "Vk13YXJlMSE=",
+			"enableAviHa": "false",
+			"aviController01Ip": "192.168.138.9",
+			"aviController01Fqdn": "nsx-alb.tkgs.tanzuathome.net",
+			"aviController02Ip": "",
+			"aviController02Fqdn": "",
+			"aviController03Ip": "",
+			"aviController03Fqdn": "",
+			"aviClusterIp": "",
+			"aviClusterFqdn": "",
+			"aviSize": "small",
+			"aviCertPath": "",
+			"aviCertKeyPath": ""
+		},
+		"tkgsVipNetwork": {
+			"tkgsVipNetworkName": "Workload-VIP-Network",
+			"tkgsVipNetworkGatewayCidr": "192.168.139.1/24",
+			"tkgsVipIpStartRange": "192.168.139.2",
+			"tkgsVipIpEndRange": "192.168.139.126"
+		},
+		"tkgsMgmtNetworkSpec": {
+			"tkgsMgmtNetworkName": "Supervisor-Management-Network",
+			"tkgsMgmtNetworkGatewayCidr": "192.168.138.1/24",
+			"tkgsMgmtNetworkStartingIp": "192.168.138.190",
+			"tkgsMgmtNetworkDnsServers": "192.168.128.1",
+			"tkgsMgmtNetworkSearchDomains": "tkgs.tanzuathome.net",
+			"tkgsMgmtNetworkNtpServers": "pool.ntp.org"
+		},
+		"tkgsStoragePolicySpec": {
+			"masterStoragePolicy": "tanzu-gold-storage-policy",
+			"ephemeralStoragePolicy": "tanzu-gold-storage-policy",
+			"imageStoragePolicy": "tanzu-gold-storage-policy"
+		},
+		"tkgsPrimaryWorkloadNetwork": {
+			"tkgsPrimaryWorkloadPortgroupName": "Workload-VIP-Network",
+			"tkgsPrimaryWorkloadNetworkName": "network-1",
+			"tkgsPrimaryWorkloadNetworkGatewayCidr": "192.168.139.1/24",
+			"tkgsPrimaryWorkloadNetworkStartRange": "192.168.139.128",
+			"tkgsPrimaryWorkloadNetworkEndRange": "192.168.139.254",
+			"tkgsWorkloadDnsServers": "192.168.128.1",
+			"tkgsWorkloadNtpServers": "pool.ntp.org",
+			"tkgsWorkloadServiceCidr": "10.96.0.0/22"
+		}
+	}
+}
