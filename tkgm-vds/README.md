@@ -6,11 +6,9 @@ This nested environment is created in two steps:
 
 1. Run a PowerShell script to create a nested vCenter. The nested vCenter has these attributes:
    - 3 nested ESXi Hosts
-   - 4 Portgroups mapped to VLANs in the outer vCenter
+   - 6 Portgroups mapped to VLANs in the outer vCenter
    - A Shared VSAN data store
 1. Use the Tanzu Service Installer (a.k.a. Arcas) to enable and configure TKGm in the nested vCenter
-
-These instructions will assume that you can provide a VMware marketplace token for downloading components of TKGm.
 
 ## Prerequisites
 
@@ -25,10 +23,15 @@ These instructions will assume that you can provide a VMware marketplace token f
    - Update the `$VCSAInstallerPath` script variable with the location of the directory
    - If you are on a Mac, disable gatekeeper with a command similar to the following:
      `sudo xattr -r -d com.apple.quarantine VMware-VCSA-all-7.0.3-19234570`
+1. NSX Advanced LoadBalancer (aka AVI Vantage) - Currently Arcas supports version 20.1.7
+   - Download NSX ALB from https://customerconnect.vmware.com/downloads/details?downloadGroup=NSX-ALB-10-NDC&productId=1092
+   - Update the `$NSXAdvLBOVA` script variable with the location of the downloaded OVA
+1. Kubernetes VM template from https://marketplace.cloud.vmware.com/services/details/tanzu-kubernetes-grid-1-1-1211?slug=true
+   - These instructions assume Photon and Kubernetes version 1.22.5
 
 ## Procedure Part 1: Nested Infrastructure
 
-The PowerShell script `nestedEsxiForTKGm.ps1` in this folder will create a nested vSphere environment for installing TKGs.
+The PowerShell script `nestedEsxiForTKGm.ps1` in this folder will create a nested vSphere environment for installing TKGm.
 
 There are a large set of variables at the beginning of this script that define the nested environment. The most
 important of these are the IP addresses, domain names, and network names from the outer vCenter. The values in the script
@@ -39,13 +42,13 @@ that I own. You should change these values to match a domain that you control, a
  Before running the script, you should create DNS entries to match entries in the script. In my environment, I use
  the following DNS records:
 
-| Name                              | Address         |
-|-----------------------------------|-----------------|
-| vcsa.tkgm.tanzuathome.net         | 192.168.136.3   |
-| tkgm-esxi-1.tkgm.tanzuathome.net  | 192.168.136.4   |
-| tkgm-esxi-2.tkgm.tanzuathome.net  | 192.168.136.5   |
-| tkgm-esxi-3.tkgm.tanzuathome.net  | 192.168.136.6   |
-| nsx-alb.tkgm.tanzuathome.net      | 192.168.136.9   |
+| Name                              | Address       |
+|-----------------------------------|---------------|
+| vcsa.tkgm.tanzuathome.net         | 192.168.136.3 |
+| tkgm-esxi-1.tkgm.tanzuathome.net  | 192.168.136.4 |
+| tkgm-esxi-2.tkgm.tanzuathome.net  | 192.168.136.5 |
+| tkgm-esxi-3.tkgm.tanzuathome.net  | 192.168.136.6 |
+| nsx-alb.tkgm.tanzuathome.net      | 192.168.136.9 |
 
 After the script variables have been set and the DNS entries creatred, run the script `nestedEsxiForTKGm.ps1`.
 This will create a new vCenter with three nested ESXi hosts. The script will run for approximately 40 minutes.
@@ -58,13 +61,12 @@ This will create a new vCenter with three nested ESXi hosts. The script will run
 
 Download the VM template for Kubernetes. Install it in the vCenter and convert it to a template.
 
-v1.21.2 photon from here: https://customerconnect.vmware.com/en/downloads/details?downloadGroup=TKG-140&productId=988&rPId=65946
-
+Download the v1.22.5 photon VM from here: https://marketplace.cloud.vmware.com/services/details/tanzu-kubernetes-grid-1-1-1211?slug=true
 
 ### About Tanzu Service Installer
 
-Tanzu Service Installer (a.k.a "arcas") is a VMware internal tool that automates many of the aspects of enabling workload management
-in vSphere (a.k.a vSphere with Tanzu", a.k.a. Tanzu Kubernetes Grid Service - or TKGS).
+Tanzu Service Installer (a.k.a "arcas") is a VMware internal tool that automates many of the aspects of installing Tanzu Kubernetes Grid
+Multi-Cloud in vSphere (a.k.a TKGm).
 
 Arcas runs in a purpose built VM that is installed in vSphere. It is installed via an OVA downloaded from the VMware marketplace.
 
@@ -75,45 +77,31 @@ are designed in my home lab.
 
 ### Network Design
 
-| Reference Architecture Network | Notes |
-|---|---|
-| Management/AVI Management | 192.168.136.10 - 28 |
-| TKG Management | Managament cluster and shared service cluster nodes go here. Requires DHCP |
-| TKG Management Data | AVI Service engines for TKG management go here (SE Group 01) |
-| TKG Workload | Workload cluster nodes go here. Requires DHCP |
-| TKG Workload Data | AVI Service engines for TKG Workload go here (SE Group 02) |
-
-
-TKGm uses three types of networks - management, workload, and VIP networks. This installation is based
-on the two subnet model for TKGm - where the workload and VIP networks share the same subnet.
+The reference architecture for TKGm uses six networks - two of which need DHCP enabled.
 
 When designing a Kubernetes environment it is also important to be mindful for the networks that exist inside
 a Kubernetes cluster - those networks cannot overlap each other, and should not overlap with other
 networks in use. The table below shows the network design for TKGm in my home lab:
 
-| Network      | vSphere Port Group            | Item                          | IP or Range         |
-|--------------|-------------------------------|-------------------------------|---------------------|
-| Management   | Supervisor-Management-Network | vcsa.tkgm.tanzuathome.net     | 192.168.136.3       |
-| Management   | Supervisor-Management-Network | esxi-1.tkgm.tanzuathome.net   | 192.168.136.4       |
-| Management   | Supervisor-Management-Network | esxi-2.tkgm.tanzuathome.net   | 192.168.136.5       |
-| Management   | Supervisor-Management-Network | esxi-3.tkgm.tanzuathome.net   | 192.168.136.6       |
-| Management   | Supervisor-Management-Network | harbor.tkgm.tanzuathome.net   | 192.168.136.8       |
-| Management   | Supervisor-Management-Network | nsx-alb.tkgm.tanzuathome.net  | 192.168.136.9       |
-| Management   | Supervisor-Management-Network | NSX Service Engines           | 192.168.136.180-187 |
-| VIP          | Workload-VIP-Network          | VIP Network Range             | 192.168.133.129-239 |
-| Workload     | Workload-VIP-Network          | Workload Network Range (DHCP) | 192.168.133.10-128  |
-| K8S Internal | N/A                           | Supervisor Service CIDR       | 10.113.0.0/16       |
-| K8S Internal | N/A                           | POD CIDR                      | 10.96.0.0/12        |
-| K8S Internal | N/A                           | Service CIDR                  | 10.112.0.0/16       |
-
+| Network                         | vSphere Port Group | IP or Range        |
+|---------------------------------|--------------------|--------------------|
+| nsx-alb.tkgm.tanzuathome.net    | vlan-136           | 192.168.136.9      |
+| NSX ALB Management Network      | vlan-136           | 192.168.136.20-69  |
+| VIP Network Range               | vlan-137           | 192.168.137.20-69  |
+| Management Data Network         | vlan-135           | 192.168.135.20-69  |
+| Workload Data Network           | vlan-132           | 192.168.132.20-69  |
+| Management Network (DHCP)       | vlan-133           | 192.168.133.10-128 |
+| Workload Network (DHCP)         | vlan-134           | 192.168.134.10-128 |
+| K8S POD CIDR (All Clusters)     | N/A                | 100.96.0.0/11      |
+| K8S Service CIDR (All Clusters) | N/A                | 100.64.0.0/13      |
 
 ### Tanzu Service Installer as a Data Collector
 
 When you run the service installer, you will need to supply many configuration variables. These are the same variables you will
-need when installing TKGs in a customer environment - so you can think if the service installer as a kind of "data collector" for
+need when installing TKGm in a customer environment - so you can think if the service installer as a kind of "data collector" for
 configuration variables you will need.
 
-The file `vsphere.json` in this folder contains the output from running arcas with the configuration variables
+The file `vsphere-dvs-tkgm.json` in this folder contains the output from running arcas with the configuration variables
 that are appropriate for my home lab.
 
 ### Run the Service Installer
@@ -121,26 +109,27 @@ that are appropriate for my home lab.
 1. Download and deploy the OVA for service installer in your vCenter. You can use either the outer vCenter, or the
    nested vCenter.
 1. Access the service installer user interface via a browser. It is available on port 8888 of the VM. For me, this is
-   http://192.168.128.23:8888
+   http://192.168.128.28:8888
 1. Arcas can create configurations for several different types of vSphere installs. These instructions are based on
-   Deploying TKGS with "VMware vSphere with DVS"
-1. Start the wizard for TKGS and enter the appropriate values for your installation (see `vsphere.json` in this folder for
-   an example)
-1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere.json`
-1. SSH into the Service Installer VM (ssh root@192.168.128.23) password is: TaB5!@9Y
+   Deploying TKGm with "Tanzu Kubernetes Grid Multi-Cloud on VMware vSphere with DVS"
+1. Start the wizard for "Tanzu Kubernetes Grid Multi-Cloud on VMware vSphere with DVS" and enter the appropriate values for your installation
+   (see `vsphere-dvs-tkgm.json` in this folder for an example)
+1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere-dvs-tkgm.json`
+1. SSH into the Service Installer VM (ssh root@192.168.128.28)
 1. Run the following command:
 
    ```shell
-   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere.json \
-     --avi_configuration --tkg_mgmt_configuration \
-     --shared_service_configuration --workload_preconfig --workload_deploy --deploy_extensions
+   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgm.json \
+      --avi_configuration --tkg_mgmt_configuration \
+      --shared_service_configuration --workload_preconfig --workload_deploy --deploy_extensions
    ```
+
 1. Using the values I supplied, this will do the following:
 
    - Install and configure NSX Advanced Load Balancer
-   - Enable Workload Managment (Kubernetes)
-   - Create a namespace
-   - Create a workload cluster
+   - Create a Management Cluster
+   - Create a Shared Services Cluster
+   - Create a Workload cluster
 
 
 ## Resources
