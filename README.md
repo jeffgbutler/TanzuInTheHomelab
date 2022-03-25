@@ -26,14 +26,16 @@ Configuring VLANs can be confusing. Here's a good video showing a simple setup f
 In the EdgeRouter and vCenter, I have configured several utility VLANs that can be used by the various nested environments. One important
 thing is to configure the vCenter port groups to accept promiscuous mode and forged transmits.
 
-| VLAN | CIDR             | DHCP Range         | vCenter Port Group | Intended Use                        |
-|------|------------------|--------------------|--------------------|-------------------------------------|
-| 133  | 192.168.133.0/24 | 192.168.133.10-128 | vm-network-133     | TKGm Management Network             |
-| 134  | 192.168.134.0/24 | 192.168.134.10-128 | vm-network-134     | TKGm Workload Network               |
-| 135  | 192.168.135.0/24 | N/A                | vm-network-135     | TKGm Mgmt and Workload Data Network |
-| 136  | 192.168.136.0/24 | N/A                | vm-network-136     | TKGm Infrastructure and AVI Network |
-| 138  | 192.168.138.0/24 | N/A                | vm-network-138     | TKGs Management Network             |
-| 139  | 192.168.139.0/24 | N/A                | vm-network-138     | TKGs Workload and VIP Network       |
+| VLAN | CIDR             | DHCP Range         | vCenter Port Group | Intended Use                    |
+|------|------------------|--------------------|--------------------|---------------------------------|
+| 132  | 192.168.132.1/24 | N/A                | vm-network-132     | TKGm Workload Data Network      |
+| 133  | 192.168.133.1/24 | 192.168.133.10-128 | vm-network-133     | TKGm Management Network (DHCP)  |
+| 134  | 192.168.134.1/24 | 192.168.134.10-128 | vm-network-134     | TKGm Workload Network (DHCP)    |
+| 135  | 192.168.135.1/24 | N/A                | vm-network-135     | TKGm Management Data Network    |
+| 136  | 192.168.136.1/24 | N/A                | vm-network-136     | TKGm NSX ALB Management Network |
+| 137  | 192.168.137.1/24 | N/A                | vm-network-137     | TKGm VIP Network Range          |
+| 138  | 192.168.138.1/24 | N/A                | vm-network-138     | TKGs Management Network         |
+| 139  | 192.168.139.1/24 | N/A                | vm-network-138     | TKGs Workload and VIP Network   |
 
 
 ## Acknowledgement
