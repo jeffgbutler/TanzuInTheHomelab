@@ -11,7 +11,7 @@ $VIPassword = "entered interactively"
 # Full Path to both the Nested ESXi 7.0 VA and Extracted VCSA 7.0 ISO
 $NestedESXiApplianceOVA = "/Users/jeffbutler/NestedVCF/Nested_ESXi7.0u3c_Appliance_Template_v1.ova"
 $VCSAInstallerPath = "/Users/jeffbutler/NestedVCF/VMware-VCSA-all-7.0.3-19234570"
-$NSXAdvLBOVA = "/Users/jeffbutler/NestedVCF/controller-21.1.1-9045.ova"
+$NSXAdvLBOVA = "/Users/jeffbutler/NestedVCF/controller-20.1.7-9154.ova"
 
 # Nested ESXi VMs to deploy
 $NestedESXiHostnameToIPs = @{
@@ -39,15 +39,19 @@ $VCSARootPassword = "VMware1!"
 $VCSASSHEnable = "true"
 
 # Networks for TKGm
-$VMNetwork2 = "vm-network-133"
-$VMNetwork3 = "vm-network-134"
-$VMNetwork4 = "vm-network-135"
+$VMNetwork2 = "vm-network-132"
+$VMNetwork3 = "vm-network-133"
+$VMNetwork4 = "vm-network-134"
+$VMNetwork5 = "vm-network-135"
+$VMNetwork6 = "vm-network-137"
 
 # Portgroup Names for Nested vCenter
 $Portgroup1 = "vlan-136"
-$Portgroup2 = "vlan-dhcp-133"
-$Portgroup3 = "vlan-dhcp-134"
-$Portgroup4 = "vlan-135"
+$Portgroup2 = "vlan-132"
+$Portgroup3 = "vlan-dhcp-133"
+$Portgroup4 = "vlan-dhcp-134"
+$Portgroup5 = "vlan-135"
+$Portgroup6 = "vlan-137"
 
 # General Deployment Configuration for Nested ESXi, & VCSA
 $VMDatacenter = "Datacenter"
@@ -292,11 +296,13 @@ if($deployNestedESXiVMs -eq 1) {
         My-Logger "Deploying Nested ESXi VM $VMName ..."
         $vm = Import-VApp -Source $NestedESXiApplianceOVA -OvfConfiguration $ovfconfig -Name $VMName -Location $cluster -VMHost $vmhost -Datastore $datastore -DiskStorageFormat thin
 
-        My-Logger "Adding vmnic2/vmnic3/vmnic4/vmnic5 for `"$VMNetwork1`" and `"$VMNetwork2`" and `"$VMNetwork3`" and `"$VMNetwork4`"to passthrough to Nested ESXi VMs ..."
+        My-Logger "Adding vmnic2/vmnic3/vmnic4/vmnic5/vmnic6/vmnic7 for `"$VMNetwork1`" and `"$VMNetwork2`" and `"$VMNetwork3`" and `"$VMNetwork4`" and `"$VMNetwork5`" and `"$VMNetwork5`" to passthrough to Nested ESXi VMs ..."
         New-NetworkAdapter -VM $vm -Type Vmxnet3 -NetworkName $VMNetwork1 -StartConnected -confirm:$false | Out-File -Append -LiteralPath $verboseLogFile
         New-NetworkAdapter -VM $vm -Type Vmxnet3 -NetworkName $VMNetwork2 -StartConnected -confirm:$false | Out-File -Append -LiteralPath $verboseLogFile
         New-NetworkAdapter -VM $vm -Type Vmxnet3 -NetworkName $VMNetwork3 -StartConnected -confirm:$false | Out-File -Append -LiteralPath $verboseLogFile
         New-NetworkAdapter -VM $vm -Type Vmxnet3 -NetworkName $VMNetwork4 -StartConnected -confirm:$false | Out-File -Append -LiteralPath $verboseLogFile
+        New-NetworkAdapter -VM $vm -Type Vmxnet3 -NetworkName $VMNetwork5 -StartConnected -confirm:$false | Out-File -Append -LiteralPath $verboseLogFile
+        New-NetworkAdapter -VM $vm -Type Vmxnet3 -NetworkName $VMNetwork6 -StartConnected -confirm:$false | Out-File -Append -LiteralPath $verboseLogFile
 
         $vm | New-AdvancedSetting -name "ethernet2.filter4.name" -value "dvfilter-maclearn" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
         $vm | New-AdvancedSetting -Name "ethernet2.filter4.onFailure" -value "failOpen" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
@@ -309,6 +315,12 @@ if($deployNestedESXiVMs -eq 1) {
 
         $vm | New-AdvancedSetting -name "ethernet5.filter4.name" -value "dvfilter-maclearn" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
         $vm | New-AdvancedSetting -Name "ethernet5.filter4.onFailure" -value "failOpen" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
+
+        $vm | New-AdvancedSetting -name "ethernet6.filter4.name" -value "dvfilter-maclearn" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
+        $vm | New-AdvancedSetting -Name "ethernet6.filter4.onFailure" -value "failOpen" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
+
+        $vm | New-AdvancedSetting -name "ethernet7.filter4.name" -value "dvfilter-maclearn" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
+        $vm | New-AdvancedSetting -Name "ethernet7.filter4.onFailure" -value "failOpen" -confirm:$false -ErrorAction SilentlyContinue | Out-File -Append -LiteralPath $verboseLogFile
 
         My-Logger "Updating vCPU Count to $NestedESXivCPU & vMEM to $NestedESXivMEM GB ..."
         Set-VM -Server $viConnection -VM $vm -NumCpu $NestedESXivCPU -CoresPerSocket $NestedESXiCoresPerSocket -MemoryGB $NestedESXivMEM -Confirm:$false | Out-File -Append -LiteralPath $verboseLogFile
@@ -482,28 +494,34 @@ if($setupNewVC -eq 1) {
         # vmnic3 = VMNetwork2 (uplink2)
         # vmnic4 = VMNetwork3 (uplink3)
         # vmnic5 = VMNetwork4 (uplink4)
+        # vmnic6 = VMNetwork5 (uplink5)
+        # vmnic7 = VMNetwork6 (uplink6)
 
-        $vds = New-VDSwitch -Server $vc -Name $NewVCVDSName -Location (Get-Datacenter -Name $NewVCDatacenterName) -Mtu 1600 -NumUplinkPorts 4
+        $vds = New-VDSwitch -Server $vc -Name $NewVCVDSName -Location (Get-Datacenter -Name $NewVCDatacenterName) -Mtu 1600 -NumUplinkPorts 6
 
-        My-Logger "Creating VDS Management Network Portgroup"
         New-VDPortgroup -Server $vc -Name $Portgroup1 -Vds $vds | Out-File -Append -LiteralPath $verboseLogFile
-        Get-VDPortgroup -Server $vc $Portgroup1 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink1") -UnusedUplinkPort @("dvUplink2", "dvUplink3", "dvUplink4") | Out-File -Append -LiteralPath $verboseLogFile
+        Get-VDPortgroup -Server $vc $Portgroup1 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink1") -UnusedUplinkPort @("dvUplink2", "dvUplink3", "dvUplink4", "dvUplink5", "dvUplink6") | Out-File -Append -LiteralPath $verboseLogFile
 
-        My-Logger "Creating VDS Supervisor Cluster Management Network Portgroup"
         New-VDPortgroup -Server $vc -Name $Portgroup2 -Vds $vds -NumPorts 256 | Out-File -Append -LiteralPath $verboseLogFile
-        Get-VDPortgroup -Server $vc $Portgroup2 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink2") -UnusedUplinkPort @("dvUplink1", "dvUplink3", "dvUplink4") | Out-File -Append -LiteralPath $verboseLogFile
+        Get-VDPortgroup -Server $vc $Portgroup2 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink2") -UnusedUplinkPort @("dvUplink1", "dvUplink3", "dvUplink4", "dvUplink5", "dvUplink6") | Out-File -Append -LiteralPath $verboseLogFile
 
         New-VDPortgroup -Server $vc -Name $Portgroup3 -Vds $vds -NumPorts 256 | Out-File -Append -LiteralPath $verboseLogFile
-        Get-VDPortgroup -Server $vc $Portgroup3 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink3") -UnusedUplinkPort @("dvUplink1", "dvUplink2", "dvUplink4") | Out-File -Append -LiteralPath $verboseLogFile
+        Get-VDPortgroup -Server $vc $Portgroup3 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink3") -UnusedUplinkPort @("dvUplink1", "dvUplink2", "dvUplink4", "dvUplink5", "dvUplink6") | Out-File -Append -LiteralPath $verboseLogFile
 
         New-VDPortgroup -Server $vc -Name $Portgroup4 -Vds $vds | Out-File -Append -LiteralPath $verboseLogFile
-        Get-VDPortgroup -Server $vc $Portgroup4 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink4") -UnusedUplinkPort @("dvUplink1", "dvUplink2", "dvUplink3") | Out-File -Append -LiteralPath $verboseLogFile
+        Get-VDPortgroup -Server $vc $Portgroup4 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink4") -UnusedUplinkPort @("dvUplink1", "dvUplink2", "dvUplink3", "dvUplink5", "dvUplink6") | Out-File -Append -LiteralPath $verboseLogFile
+
+        New-VDPortgroup -Server $vc -Name $Portgroup5 -Vds $vds | Out-File -Append -LiteralPath $verboseLogFile
+        Get-VDPortgroup -Server $vc $Portgroup5 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink5") -UnusedUplinkPort @("dvUplink1", "dvUplink2", "dvUplink3", "dvUplink4", "dvUplink6") | Out-File -Append -LiteralPath $verboseLogFile
+
+        New-VDPortgroup -Server $vc -Name $Portgroup6 -Vds $vds | Out-File -Append -LiteralPath $verboseLogFile
+        Get-VDPortgroup -Server $vc $Portgroup6 | Get-VDUplinkTeamingPolicy | Set-VDUplinkTeamingPolicy -ActiveUplinkPort @("dvUplink6") -UnusedUplinkPort @("dvUplink1", "dvUplink2", "dvUplink3", "dvUplink4", "dvUplink5") | Out-File -Append -LiteralPath $verboseLogFile
 
         foreach ($vmhost in Get-Cluster -Server $vc | Get-VMHost) {
             My-Logger "Adding $vmhost to $NewVCVDSName"
             $vds | Add-VDSwitchVMHost -VMHost $vmhost | Out-Null
 
-            $vmhostNetworkAdapter = Get-VMHost $vmhost | Get-VMHostNetworkAdapter -Physical -Name vmnic2,vmnic3,vmnic4,vmnic5
+            $vmhostNetworkAdapter = Get-VMHost $vmhost | Get-VMHostNetworkAdapter -Physical -Name vmnic2,vmnic3,vmnic4,vmnic5,vmnic6,vmnic7
             $vds | Add-VDSwitchPhysicalNetworkAdapter -VMHostNetworkAdapter $vmhostNetworkAdapter -Confirm:$false
         }
     }
