@@ -189,7 +189,8 @@ that are appropriate for my home lab.
    kubectl expose pod kuard --type=LoadBalancer --port=80 --target-port=8080
    ```
 
-   You should be able to access Kuard on the external IP address of the Kuard service.
+   After this, you should be able to hit kuard at the IP exposed by the load balancer. You can retrive the IP address with this
+   command: `kubectl get svc kuard`. Hit Kuard with the external-ip, for me it was http://192.168.132.20
 
    Note that the first time you expose a service in the workload cluster it will take a long time to come up because AVI will create
    new service engine instances.
@@ -199,8 +200,6 @@ that are appropriate for my home lab.
 Vault page: https://vault.vmware.com/group/vault-main-library/service-installer-for-vmware-tanzu
 
 Arcas FAQ: https://vault.vmware.com/group/vault-main-library/document-preview/-/document_library/6KC5yhh3TpWl/view_file/72967477
-
-Orf Gelbrich's repo: https://github.com/ogelbric/Arcas
 
 ## Troubleshooting
 
