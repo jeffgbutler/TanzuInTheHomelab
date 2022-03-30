@@ -73,7 +73,7 @@ Arcas runs in a purpose built VM that is installed in vSphere. It is installed v
 Arcas automates many of the tedious tasks with enabling Tanzu Kubernetes Grid - most notably the configuration of NSX
 Advanced Load Balancer. Arcas is very opinionated about how your Kubernetes environment and your networks are
 designed. As of version 1.1, arcas deploys Tanzu Kubernetes Grid according to the published reference architecture -
-which means 6 subnets and a sharded services cluster. You must still think deeply about network and cluster design. I will discuss how
+which means 6 subnets and a shared services cluster. You must still think deeply about network and cluster design. I will discuss how
 the networks are designed in my home lab.
 
 ### Network Design
