@@ -128,9 +128,71 @@ that are appropriate for my home lab.
 
    - Install and configure NSX Advanced Load Balancer
    - Create a Management Cluster
-   - Create a Shared Services Cluster
+   - Create a Shared Services Cluster with Harbor
    - Create a Workload cluster
 
+## After Running the Service Installer
+
+### Access Harbor
+
+1. SSH into the service installer VM
+1. Find the context for the shared services cluster
+
+   ```shell
+   kubectl config get-contexts
+   ```
+
+   In my case the context was `shared-service-cluster-admin@shared-service-cluster`
+
+1. Access the shared services cluster
+
+   ```shell
+   kubectl config use-context shared-service-cluster-admin@shared-service-cluster
+   ```
+
+1. Find the IP address of the Envoy service
+
+   ```shell
+   kubectl get svc envoy -n tanzu-system-ingress
+   ```
+
+1. Show the domain name for the harbor install
+
+   ```shell
+   kubectl get httpproxy -A
+   ```
+
+1. Add a DNS "A" record for the Harbor host and the Envoy IP address
+
+### Try a Deployment on the Workload Cluster
+
+1. SSH into the service installer VM
+1. Find the context for the workload cluster
+
+   ```shell
+   kubectl config get-contexts
+   ```
+
+   In my case the context was `workload-cluster-admin@workload-cluster`
+
+1. Access the workload cluster
+
+   ```shell
+   kubectl config use-context workload-cluster-admin@workload-cluster
+   ```
+
+1. Deploy and expose Kuard
+
+   ```shell
+   kubectl run kuard --restart=Never --image=gcr.io/kuar-demo/kuard-amd64:blue
+
+   kubectl expose pod kuard --type=LoadBalancer --port=80 --target-port=8080
+   ```
+
+   You should be able to access Kuard on the external IP address of the Kuard service.
+
+   Note that the first time you expose a service in the workload cluster it will take a long time to come up because AVI will create
+   new service engine instances.
 
 ## Resources
 
