@@ -70,16 +70,17 @@ Multi-Cloud in vSphere (a.k.a TKGm).
 
 Arcas runs in a purpose built VM that is installed in vSphere. It is installed via an OVA downloaded from the VMware marketplace.
 
-Arcas automates many of the tedious tasks with enabling vSphere with Tanzu - most notably the configuration of NSX
-Advanced Load Balancer. But arcas is not very opinionated about how your Kubernetes environment and your networks are
-designed. This means that you must still think deeply about network and cluster design. I will discuss how the networks
-are designed in my home lab.
+Arcas automates many of the tedious tasks with enabling Tanzu Kubernetes Grid - most notably the configuration of NSX
+Advanced Load Balancer. Arcas is very opinionated about how your Kubernetes environment and your networks are
+designed. As of version 1.1, arcas deploys Tanzu Kubernetes Grid according to the published reference architecture -
+which means 6 subnets and a sharded services cluster. You must still think deeply about network and cluster design. I will discuss how
+the networks are designed in my home lab.
 
 ### Network Design
 
 The reference architecture for TKGm uses six networks - two of which need DHCP enabled.
 
-When designing a Kubernetes environment it is also important to be mindful for the networks that exist inside
+When designing a Kubernetes environment it is also important to be mindful of the networks that exist inside
 a Kubernetes cluster - those networks cannot overlap each other, and should not overlap with other
 networks in use. The table below shows the network design for TKGm in my home lab:
 
@@ -107,7 +108,9 @@ that are appropriate for my home lab.
 ### Run the Service Installer
 
 1. Download and deploy the OVA for service installer in your vCenter. You can use either the outer vCenter, or the
-   nested vCenter.
+   nested vCenter. For TKGm it makes sense to use the inner vCenter as the Arcas VM will be very useful after the install -
+   it contains many utilities that can be used to manage TKGm. If you use the inner vCenter, use the management network
+   (vlan-136 in my homelab) and use an IP address outside the range specified for NSX ALB
 1. Access the service installer user interface via a browser. It is available on port 8888 of the VM. For me, this is
    http://192.168.128.28:8888
 1. Arcas can create configurations for several different types of vSphere installs. These instructions are based on
@@ -162,7 +165,8 @@ that are appropriate for my home lab.
    kubectl get httpproxy -A
    ```
 
-1. Add a DNS "A" record for the Harbor host and the Envoy IP address
+1. Add a DNS "A" record for the Harbor host and the Envoy IP address. For my homelab it was `harbor.tkgm.tanzuathome.net`
+   and `192.168.135.20`
 
 ### Try a Deployment on the Workload Cluster
 
