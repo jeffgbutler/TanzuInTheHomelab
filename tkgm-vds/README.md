@@ -84,17 +84,17 @@ When designing a Kubernetes environment it is also important to be mindful of th
 a Kubernetes cluster - those networks cannot overlap each other, and should not overlap with other
 networks in use. The table below shows the network design for TKGm in my home lab:
 
-| Network                         | vSphere Port Group | IP or Range        |
-|---------------------------------|--------------------|--------------------|
-| nsx-alb.tkgm.tanzuathome.net    | vlan-136           | 192.168.136.9      |
-| NSX ALB Management Network      | vlan-136           | 192.168.136.20-69  |
-| VIP Network Range               | vlan-137           | 192.168.137.20-69  |
-| Management Data Network         | vlan-135           | 192.168.135.20-69  |
-| Workload Data Network           | vlan-132           | 192.168.132.20-69  |
-| Management Network (DHCP)       | vlan-133           | 192.168.133.10-128 |
-| Workload Network (DHCP)         | vlan-134           | 192.168.134.10-128 |
-| K8S POD CIDR (All Clusters)     | N/A                | 100.96.0.0/11      |
-| K8S Service CIDR (All Clusters) | N/A                | 100.64.0.0/13      |
+| Network                         | vSphere Port Group | IP or Range        | Usage                                                    |
+|---------------------------------|--------------------|--------------------|----------------------------------------------------------|
+| nsx-alb.tkgm.tanzuathome.net    | vlan-136           | 192.168.136.9      |                                                          |
+| NSX ALB Management Network      | vlan-136           | 192.168.136.20-69  | AVI Service Engines                                      |
+| VIP Network Range               | vlan-137           | 192.168.137.20-69  | IPs for API endpoints                                    |
+| Management Data Network         | vlan-135           | 192.168.135.20-69  | Load Balancer IPs for Management Network                 |
+| Workload Data Network           | vlan-132           | 192.168.132.20-69  | Load Balanacer IPs for Workload Network                  |
+| Management Network (DHCP)       | vlan-133           | 192.168.133.10-128 | IPs for nodes in management and shared services clusters |
+| Workload Network (DHCP)         | vlan-134           | 192.168.134.10-128 | IPs for nodes in workload clusters                       |
+| K8S POD CIDR (All Clusters)     | N/A                | 100.96.0.0/11      | K8S Internal POD Network                                 |
+| K8S Service CIDR (All Clusters) | N/A                | 100.64.0.0/13      | K8S internal Services Network                            |
 
 ### Tanzu Service Installer as a Data Collector
 
@@ -200,6 +200,8 @@ that are appropriate for my home lab.
    new service engine instances.
 
 ## Resources
+
+Reference Architectures: https://github.com/vmware-tanzu-labs/tanzu-validated-solutions
 
 Vault page: https://vault.vmware.com/group/vault-main-library/service-installer-for-vmware-tanzu
 

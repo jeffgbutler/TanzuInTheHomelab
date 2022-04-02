@@ -187,6 +187,8 @@ command: `kubectl get svc kuard`. Hit Kuard with the external-ip, for me it was 
 
 ## Resources
 
+Reference Architectures: https://github.com/vmware-tanzu-labs/tanzu-validated-solutions
+
 Vault page: https://vault.vmware.com/group/vault-main-library/service-installer-for-vmware-tanzu
 
 Arcas FAQ: https://vault.vmware.com/group/vault-main-library/document-preview/-/document_library/6KC5yhh3TpWl/view_file/72967477
