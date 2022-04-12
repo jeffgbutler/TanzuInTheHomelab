@@ -6,8 +6,7 @@ about PowerCLI is here: https://developer.vmware.com/powercli
 
 ## Basic Check
 
-Version 12.5.0 of PowerCLI has a bug on MacOS that will break these scripts. Here's how to check to
-see if it gets fixed:
+Version 12.5.0 of PowerCLI has a bug that will break these scripts. Here's how to check to see if it gets fixed:
 
 ```powershell
 Connect-VIServer
@@ -16,6 +15,8 @@ Disconnect-VIServer
 ```
 
 Connect to any vCenter. If the second command works, you are good to go.
+
+**Update:** this is resoved in version 12.6.0 of PowerCLI
 
 ## Display All Available Versions
 
