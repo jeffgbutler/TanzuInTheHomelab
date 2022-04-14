@@ -1,7 +1,6 @@
 # Tanzu Community Edition (TCE) on vSphere
 
-Instructions for installing Tanzu Community Edition (TCE) on vSphere. This is an example
-of using TCE on a developer workstation. In these instructions, we will use an Ubuntu Linux VM.
+Instructions for installing Tanzu Community Edition (TCE) on vSphere.
 
 ## Download the OVA
 
