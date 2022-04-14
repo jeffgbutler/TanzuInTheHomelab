@@ -9,6 +9,7 @@ for helpful tips: [PowerShell Tips](PowershellNotes.md)
 |---|---|
 | [TKGm and NSX Advanced Load Balancer](tkgm-vds) | PowerShell script and Tanzu Service Installer |
 | [TKGs and NSX Advanced Load Balancer](tkgs-vds) | PowerShell script and Tanzu Service Installer |
+| [TCE on vSphere](tce-managed) | N/A |
 
 ## My Home Lab Environment
 
@@ -36,6 +37,7 @@ thing is to configure the vCenter port groups to accept promiscuous mode and for
 | 137  | 192.168.137.1/24 | N/A                | vm-network-137     | TKGm VIP Network Range          |
 | 138  | 192.168.138.1/24 | N/A                | vm-network-138     | TKGs Management Network         |
 | 139  | 192.168.139.1/24 | N/A                | vm-network-138     | TKGs Workload and VIP Network   |
+| 140  | 192.168.140.1/24 | 192.168.140.10-128 | vm-network-140     | Network for TCE                 |
 
 
 ## Acknowledgement
