@@ -51,7 +51,7 @@ are based on my home lab network. I am using two VLANs - `vm-network-138` and `v
 | nsx-alb.tkgs.tanzuathome.net      | 192.168.138.9   |
 
 After the script variables have been set and the DNS entries creatred, run the script `nestedEsxiForTKGs.ps1`.
-This will create a new vCenter with three nested ESXi hosts. The script will run for approximately 40 minutes.
+This will create a new vCenter with three nested ESXi hosts. The script will run for approximately 45 minutes.
 
 **Important:** the vCenter install will fail if you are on the VMware VPN!
 
@@ -92,6 +92,7 @@ networks in use. The table below shows the network design for TKGs in my home la
 | Management   | Supervisor-Management-Network | esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
 | Management   | Supervisor-Management-Network | esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
 | Management   | Supervisor-Management-Network | nsx-alb.tkgs.tanzuathome.net | 192.168.138.9       |
+| Management   | Supervisor-Management-Network | arcas.tkgs.tanzuathome.net   | 192.168.138.10      |
 | Management   | Supervisor-Management-Network | NSX Service Engines          | 192.168.138.180-187 |
 | Management   | Supervisor-Management-Network | Start of 5 Address Range     | 192.168.138.190     |
 | VIP          | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
@@ -113,14 +114,23 @@ that are appropriate for my home lab.
 ### Install and Start the Service Installer
 
 1. Download the OVA for service installer from the VMware marketplace
-1. Deploy the OVA in your vCenter. You can use either the outer vCenter, or the nested vCenter. Configuration values
-   for the OVA:
+1. Deploy the OVA in your vCenter. You can use either the outer vCenter, or the nested vCenter. I use the nested vCenter.
+   Configuration values for the OVA:
+   - Storage: vsanDatastore
+   - Network: Supervisor-Management-Network
    - NTP Server: `pool.ntp.org`
    - Root password: `VMware1!`
-   - Leave all the netowrk fields blank if you picked a netowrk with DHCP enabled, else enter appropriate values for your network
+   - Default Gateway: 192.168.138.1
+   - Domain name: arcas.tkgs.tanzuathome.net
+   - Domain search path: tkgs.tanzuathome.net
+   - DNS: 192.168.128.1
+   - Appliance IP address: 192.168.138.10
+   - Netmask: 255.255.255.0
+   - Leave all the network fields blank if you picked a network with DHCP enabled, else enter appropriate values for your network
+
 1. Power on the VM
 1. Access the service installer user interface via a browser. It is available on port 8888 of the VM. For me, this is
-   http://192.168.128.28:8888
+   http://192.168.138.10:8888
 
 ### Configuration Step 1: AVI and WCP
 
@@ -131,7 +141,7 @@ that are appropriate for my home lab.
 1. Enter the appropriate values for your installation (see `vsphere-dvs-tkgs-wcp.json` in this folder for
    an example)
 1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json`
-1. SSH into the Service Installer VM (ssh root@192.168.128.28).
+1. SSH into the Service Installer VM (ssh root@192.168.138.10).
 1. Run the following command:
 
    ```shell
@@ -153,8 +163,9 @@ arcas to automate the process. We'll use arcas.
 1. Select Deployment type "Namespace and Workload Cluster", then select "Configure and Generate JSON"
 1. Enter the appropriate values for your installation (see `vsphere-dvs-tkgs-namespace.json` in this folder for
    an example)
-1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json`
-1. SSH into the Service Installer VM (ssh root@192.168.128.28).
+1. Once finished, save the configuration to the arcas VM. It will be saved
+   at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json`
+1. SSH into the Service Installer VM (ssh root@192.168.138.10).
 1. Run the following command:
 
    ```shell
