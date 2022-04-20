@@ -1,0 +1,22 @@
+apiVersion: run.tanzu.vmware.com/v1alpha2
+kind: TanzuKubernetesCluster
+metadata:
+  name: tap-cluster
+  namespace: test-namespace
+spec:
+  topology:
+    controlPlane:
+      replicas: 1
+      vmClass: best-effort-medium
+      storageClass: tanzu-gold-storage-policy
+      tkr:
+        reference:
+          name: v1.20.9---vmware.1-tkg.1.a4cee5b
+    nodePools:
+      - name: workers
+        storageClass: tanzu-gold-storage-policy
+        vmClass: best-effort-medium
+        replicas: 3
+        tkr:
+          reference:
+            name: v1.20.9---vmware.1-tkg.1.a4cee5b
