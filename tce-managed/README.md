@@ -56,6 +56,26 @@ It is important to follow the post install steps for downloading the brew depend
 brew install kubectl
 ```
 
+### Install Carvel Tools
+
+```shell
+brew tap vmware-tanzu/carvel
+brew install ytt kbld kapp imgpkg kwt vendir
+```
+
+### Install Knative CLI
+
+```shell
+brew install kn
+```
+
+### Install Kpack CLI
+
+```shell
+brew tap vmware-tanzu/kpack-cli
+brew install kp
+```
+
 ### Install TCE
 
 ```shell
@@ -163,3 +183,12 @@ kubectl run kuard --restart=Never --image=gcr.io/kuar-demo/kuard-amd64:blue
 
 kubectl expose pod kuard --type=LoadBalancer --port=80 --target-port=8080
 ```
+
+## Usefull Commands
+
+Display the Kapp values schema for a package
+
+```shell
+kubectl get package knative-serving.community.tanzu.vmware.com.1.0.0 -n tanzu-package-repo-global -o yaml
+```
+ 
