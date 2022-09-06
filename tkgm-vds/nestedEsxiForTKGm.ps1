@@ -64,7 +64,7 @@ $VMDNS = "192.168.128.1"
 $VMNTP = "pool.ntp.org"
 $VMPassword = "VMware1!"
 $VMDomain = "tkgm.tanzuathome.net"
-$VMFolder = "TKGM-NSX-ALB"
+$VMFolder = "NESTED-TKGM-NSX-ALB"
 # Applicable to Nested ESXi only
 $VMSSH = "true"
 $VMVMFS = "false"
