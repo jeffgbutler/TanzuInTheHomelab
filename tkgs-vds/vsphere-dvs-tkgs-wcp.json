@@ -9,7 +9,7 @@
 			"vcenterCluster": "Workload-Cluster",
 			"vcenterDatastore": "vsanDatastore",
 			"contentLibraryName": "AVI",
-			"aviOvaName": "controller-20.1.7-9154"
+			"aviOvaName": "controller-21.1.4-2p3-9009"
 		},
 		"marketplaceSpec": {
 			"refreshToken": ""
@@ -18,7 +18,9 @@
 			"tmcDetails": {
 				"tmcAvailability": "false",
 				"tmcRefreshToken": "",
-				"tmcSupervisorClusterName": ""
+				"tmcInstanceURL": "",
+				"tmcSupervisorClusterName": "",
+				"tmcSupervisorClusterGroupName": ""
 			}
 		},
 		"infraComponents": {
@@ -47,7 +49,7 @@
 			"aviController03Fqdn": "",
 			"aviClusterIp": "",
 			"aviClusterFqdn": "",
-			"aviSize": "small",
+			"aviSize": "essentials",
 			"aviCertPath": "",
 			"aviCertKeyPath": ""
 		},
@@ -63,7 +65,8 @@
 			"tkgsMgmtNetworkStartingIp": "192.168.138.190",
 			"tkgsMgmtNetworkDnsServers": "192.168.128.1",
 			"tkgsMgmtNetworkSearchDomains": "tkgs.tanzuathome.net",
-			"tkgsMgmtNetworkNtpServers": "pool.ntp.org"
+			"tkgsMgmtNetworkNtpServers": "pool.ntp.org",
+			"subscribedContentLibraryName": ""
 		},
 		"tkgsStoragePolicySpec": {
 			"masterStoragePolicy": "tanzu-gold-storage-policy",
@@ -79,6 +82,20 @@
 			"tkgsWorkloadDnsServers": "192.168.128.1",
 			"tkgsWorkloadNtpServers": "pool.ntp.org",
 			"tkgsWorkloadServiceCidr": "10.96.0.0/22"
+		},
+		"tkgServiceConfig": {
+			"proxySpec": {
+				"enableProxy": "false",
+				"httpProxy": "",
+				"httpsProxy": "",
+				"noProxy": "",
+				"proxyCert": ""
+			},
+			"defaultCNI": "antrea",
+			"additionalTrustedCAs": {
+				"paths": [],
+				"endpointUrls": []
+			}
 		}
 	}
 }

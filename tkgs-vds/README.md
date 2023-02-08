@@ -50,7 +50,7 @@ are based on my home lab network. I am using two VLANs - `vm-network-138` and `v
 | tkgs-esxi-3.tkgs.tanzuathome.net  | 192.168.138.6   |
 | nsx-alb.tkgs.tanzuathome.net      | 192.168.138.9   |
 
-After the script variables have been set and the DNS entries creatred, run the script `nestedEsxiForTKGs.ps1`.
+After the script variables have been set and the DNS entries created, run the script `nestedEsxiForTKGs.ps1`.
 This will create a new vCenter with three nested ESXi hosts. The script will run for approximately 45 minutes.
 
 **Important:** the vCenter install will fail if you are on the VMware VPN!
@@ -92,7 +92,7 @@ networks in use. The table below shows the network design for TKGs in my home la
 | Management   | Supervisor-Management-Network | esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
 | Management   | Supervisor-Management-Network | esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
 | Management   | Supervisor-Management-Network | nsx-alb.tkgs.tanzuathome.net | 192.168.138.9       |
-| Management   | Supervisor-Management-Network | arcas.tkgs.tanzuathome.net   | 192.168.138.10      |
+| Management   | Supervisor-Management-Network | sivt.tkgs.tanzuathome.net    | 192.168.138.10      |
 | Management   | Supervisor-Management-Network | NSX Service Engines          | 192.168.138.180-187 |
 | Management   | Supervisor-Management-Network | Start of 5 Address Range     | 192.168.138.190     |
 | VIP          | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
@@ -113,7 +113,7 @@ that are appropriate for my home lab.
 
 ### Install and Start the Service Installer
 
-1. Download the OVA for service installer from the VMware marketplace
+1. Download the OVA for service installer from the VMware marketplace (https://marketplace.cloud.vmware.com/)
 1. Deploy the OVA in your vCenter. You can use either the outer vCenter, or the nested vCenter. I use the nested vCenter.
    Configuration values for the OVA:
    - Storage: vsanDatastore
@@ -121,7 +121,7 @@ that are appropriate for my home lab.
    - NTP Server: `pool.ntp.org`
    - Root password: `VMware1!`
    - Default Gateway: 192.168.138.1
-   - Domain name: arcas.tkgs.tanzuathome.net
+   - Domain name: sivt.tkgs.tanzuathome.net
    - Domain search path: tkgs.tanzuathome.net
    - DNS: 192.168.128.1
    - Appliance IP address: 192.168.138.10
@@ -134,7 +134,7 @@ that are appropriate for my home lab.
 
 ### Configuration Step 1: AVI and WCP
 
-1. Arcas can create configurations for several different types of vSphere installs. These instructions are based on
+1. SIVT can create configurations for several different types of vSphere installs. These instructions are based on
    Deploying "Tanzu on VMware vSphere with DVS"
 1. Start the wizard for "Tanzu on VMware vSphere with DVS"
 1. Select Deployment type "Enable Workload Control Plane", then select "Configure and Generate JSON"
@@ -145,8 +145,7 @@ that are appropriate for my home lab.
 1. Run the following command:
 
    ```shell
-   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json \
-      --avi_configuration --avi_wcp_configuration --enable_wcp
+   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json --avi_configuration --avi_wcp_configuration --enable_wcp --verbose
    ```
 
 1. Using the values I supplied, this will do the following:
