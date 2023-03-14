@@ -466,7 +466,7 @@ if($setupNewVC -eq 1) {
         # vmnic2 = Management on VDS (uplink1)
         # vmnic3 = Workload on VDS (uplink2)
 
-        $vds = New-VDSwitch -Server $vc -Name $NewVCVDSName -Location (Get-Datacenter -Name $NewVCDatacenterName) -Mtu 1600 -NumUplinkPorts 2
+        $vds = New-VDSwitch -Server $vc -Name $NewVCVDSName -Location (Get-Datacenter -Name $NewVCDatacenterName) -Mtu 1500 -NumUplinkPorts 2
 
         My-Logger "Creating VDS Management Network Portgroup"
         New-VDPortgroup -Server $vc -Name $NewVCMgmtPortgroupName -Vds $vds | Out-File -Append -LiteralPath $verboseLogFile
