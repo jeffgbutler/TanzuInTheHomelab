@@ -9,9 +9,9 @@ $VIUsername = "administrator@vsphere.local"
 $VIPassword = "entered interactively"
 
 # Full Path to both the Nested ESXi 7.0 VA and Extracted VCSA 7.0 ISO
-$NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi7.0u3g_Appliance_Template_v1.ova"
-$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-7.0.3-20395099"
-$NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-20.1.7-9154.ova"
+$NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi7.0u3k_Appliance_Template_v1.ova"
+$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-7.0.3-21290409"
+$NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-21.1.4-2p3-9009.ova"
 
 # Nested ESXi VMs to deploy
 $NestedESXiHostnameToIPs = @{
@@ -45,7 +45,7 @@ $NSXAdvLBCombinedVIPWorkloadNetwork = "vm-network-139"
 $VMDatacenter = "Datacenter"
 $VMCluster = "LabCluster"
 $VMNetwork = "vm-network-138"
-$VMDatastore = "VMStorage"
+$VMDatastore = "ssdStorage"
 $VMNetmask = "255.255.255.0"
 $VMGateway = "192.168.138.1"
 $VMDNS = "192.168.128.1"
@@ -466,7 +466,7 @@ if($setupNewVC -eq 1) {
         # vmnic2 = Management on VDS (uplink1)
         # vmnic3 = Workload on VDS (uplink2)
 
-        $vds = New-VDSwitch -Server $vc -Name $NewVCVDSName -Location (Get-Datacenter -Name $NewVCDatacenterName) -Mtu 1500 -NumUplinkPorts 2
+        $vds = New-VDSwitch -Server $vc -Name $NewVCVDSName -Location (Get-Datacenter -Name $NewVCDatacenterName) -Mtu 1600 -NumUplinkPorts 2
 
         My-Logger "Creating VDS Management Network Portgroup"
         New-VDPortgroup -Server $vc -Name $NewVCMgmtPortgroupName -Vds $vds | Out-File -Append -LiteralPath $verboseLogFile

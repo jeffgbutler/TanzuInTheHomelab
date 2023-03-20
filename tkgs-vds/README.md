@@ -92,10 +92,9 @@ networks in use. The table below shows the network design for TKGs in my home la
 | Management   | Supervisor-Management-Network | esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
 | Management   | Supervisor-Management-Network | esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
 | Management   | Supervisor-Management-Network | nsx-alb.tkgs.tanzuathome.net | 192.168.138.9       |
-| Management   | Supervisor-Management-Network | sivt.tkgs.tanzuathome.net    | 192.168.138.10      |
 | Management   | Supervisor-Management-Network | NSX Service Engines          | 192.168.138.180-187 |
 | Management   | Supervisor-Management-Network | Start of 5 Address Range     | 192.168.138.190     |
-| VIP          | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
+| VIP (Data)   | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
 | Workload     | Workload-VIP-Network          | Workload Network Range       | 192.168.139.128-254 |
 | K8S Internal | N/A                           | Supervisor Service CIDR      | 10.96.0.0/22        |
 | K8S Internal | N/A                           | POD CIDR                     | 10.112.0.0/12       |
@@ -114,23 +113,24 @@ that are appropriate for my home lab.
 ### Install and Start the Service Installer
 
 1. Download the OVA for service installer from the VMware marketplace (https://marketplace.cloud.vmware.com/)
-1. Deploy the OVA in your vCenter. You can use either the outer vCenter, or the nested vCenter. I use the nested vCenter.
+1. Deploy the OVA in your vCenter. You can use either the outer vCenter, or the nested vCenter. I use the outer vCenter.
    Configuration values for the OVA:
-   - Storage: vsanDatastore
-   - Network: Supervisor-Management-Network
-   - NTP Server: `pool.ntp.org`
+   - Storage: VMStorage
+   - Network: VM Network
    - Root password: `VMware1!`
-   - Default Gateway: 192.168.138.1
-   - Domain name: sivt.tkgs.tanzuathome.net
-   - Domain search path: tkgs.tanzuathome.net
+   - NTP Server: `pool.ntp.org`
+   - Harbor FQDN: harbor.sivt.tanzuathome.net
+   - Default Gateway: 192.168.128.1
+   - Domain name: sivt.tanzuathome.net
+   - Domain search path: tanzuathome.net
    - DNS: 192.168.128.1
-   - Appliance IP address: 192.168.138.10
+   - Management Network IP address: 192.168.128.134
    - Netmask: 255.255.255.0
    - Leave all the network fields blank if you picked a network with DHCP enabled, else enter appropriate values for your network
 
 1. Power on the VM
 1. Access the service installer user interface via a browser. It is available on port 8888 of the VM. For me, this is
-   http://192.168.138.10:8888
+   http://192.168.128.134:8888
 
 ### Configuration Step 1: AVI and WCP
 
@@ -141,7 +141,7 @@ that are appropriate for my home lab.
 1. Enter the appropriate values for your installation (see `vsphere-dvs-tkgs-wcp.json` in this folder for
    an example)
 1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json`
-1. SSH into the Service Installer VM (ssh root@192.168.138.10).
+1. SSH into the Service Installer VM (ssh root@192.168.128.134).
 1. Run the following command:
 
    ```shell
@@ -164,12 +164,12 @@ arcas to automate the process. We'll use arcas.
    an example)
 1. Once finished, save the configuration to the arcas VM. It will be saved
    at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json`
-1. SSH into the Service Installer VM (ssh root@192.168.138.10).
+1. SSH into the Service Installer VM (ssh root@192.168.128.134).
 1. Run the following command:
 
    ```shell
    arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json \
-      --create_supervisor_namespace --create_workload_cluster --deploy_extensions
+      --create_supervisor_namespace --create_workload_cluster --verbose
    ```
 
 1. Using the values I supplied, this will do the following:
@@ -180,7 +180,7 @@ arcas to automate the process. We'll use arcas.
 ### Test the Workload Cluster
 
 Once the workload cluster is up and running, you can find the server address by navigating to the "test-namespace"
-in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.3".
+in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.2".
 
 ```
 kubectl vsphere login --server 192.168.139.3 --tanzu-kubernetes-cluster-namespace test-namespace \
@@ -205,6 +205,30 @@ Arcas FAQ: https://vault.vmware.com/group/vault-main-library/document-preview/-/
 
 ## Troubleshooting
 
+### Check NTP Configuration
+
+All hosts should have NTP configured. This is a simple PowerShell command set you can use to check it:
+
+```powershell
+Connect-VIServer vcsa.tkgs.tanzuathome.net -User administrator@vsphere.local -Password VMware1!
+
+Get-VMHost | `
+Sort-Object Name | `
+Select-Object Name, @{N="Cluster";E={$_ | Get-Cluster}}, @{N="Datacenter";E={$_ | Get-Datacenter}}, @{N="NTPServiceRunning";E={($_ | Get-VmHostService | Where-Object {$_.key-eq "ntpd"}).Running}}, @{N="StartupPolicy";E={($_ | Get-VmHostService | Where-Object {$_.key-eq "ntpd"}).Policy}}, @{N="NTPServers";E={$_ | Get-VMHostNtpServer}}, @{N="Date&Time";E={(get-view $_.ExtensionData.configManager.DateTimeSystem).QueryDateTime()}} | format-table -autosize
+
+Disconnect-VIServer
+```
+
+### Logs
+
 Arcas Logging is in the Arcas VM at /var/log/server
 
 Follow progress in the Arcas VM: `journalctl -u arcas.service --follow`
+
+Logs for enabling workload management are in `/var/log/vmware/wcp` on the vCenter server.
+
+Sometimes it is helpful to SSH into the supervisor nodes and inspect the logs. Here's how:
+
+1. SSH to vCenter as root, then run this command `/usr/lib/vmware-wcp/decryptK8Pwd.py` to get the SSH password for the supervisor nodes
+2. SSH to any or all supervisor nodes as root using the password obtained above. Interesting logs are in `/var/log/vmware-imc/`
+   particularly `/var/log/vmware-imc/configure-wcp.stderr`
