@@ -195,6 +195,22 @@ kubectl expose pod kuard --type=LoadBalancer --port=80 --target-port=8080
 After this, you should be able to hit kuard at the IP exposed by the load balancer. You can retrive the IP address with this
 command: `kubectl get svc kuard`. Hit Kuard with the external-ip, for me it was http://192.168.139.7
 
+## Manual Cluster Creation
+
+Setup namespace `test-namespace`. Add storage and VM classes.
+
+```shell
+kubectl vsphere login --server 192.168.139.3 -u administrator@vsphere.local \
+  --insecure-skip-tls-verify
+```
+
+```shell
+kubectl get VirtualMachineClasses
+kubectl get TanzuKubernetesReleases
+kubectl get StorageClasses
+```
+
+
 ## Resources
 
 Reference Architectures: https://github.com/vmware-tanzu-labs/tanzu-validated-solutions

@@ -1,22 +1,30 @@
 apiVersion: run.tanzu.vmware.com/v1alpha2
 kind: TanzuKubernetesCluster
 metadata:
-  name: tap-cluster
+  name: tap-full-profile-cluster
   namespace: test-namespace
 spec:
   topology:
     controlPlane:
       replicas: 1
-      vmClass: best-effort-medium
+      vmClass: guaranteed-medium
       storageClass: tanzu-gold-storage-policy
       tkr:
         reference:
-          name: v1.20.9---vmware.1-tkg.1.a4cee5b
+          name: v1.23.8---vmware.3-tkg.1
     nodePools:
       - name: workers
         storageClass: tanzu-gold-storage-policy
-        vmClass: best-effort-medium
-        replicas: 3
+        vmClass: guaranteed-large
+        replicas: 5
+        volumes:
+        - name: containerd
+          mountPath: /var/lib/containerd
+          capacity:
+            storage: 120Gi
         tkr:
           reference:
-            name: v1.20.9---vmware.1-tkg.1.a4cee5b
+            name: v1.23.8---vmware.3-tkg.1
+  settings:
+    storage:
+      defaultClass: tanzu-gold-storage-policy

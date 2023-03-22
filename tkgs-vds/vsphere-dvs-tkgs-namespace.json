@@ -12,6 +12,7 @@
 			"tmcDetails": {
 				"tmcAvailability": "false",
 				"tmcRefreshToken": "",
+				"tmcInstanceURL": "",
 				"tmcSupervisorClusterName": ""
 			},
 			"tanzuObservabilityDetails": {
@@ -33,16 +34,12 @@
 		"tkgsVsphereNamespaceSpec": {
 			"tkgsVsphereNamespaceName": "test-namespace",
 			"tkgsVsphereNamespaceDescription": "",
-			"tkgsVsphereNamespaceContentLibrary": "SubscribedAutomation-Lib",
+			"tkgsVsphereNamespaceContentLibrary": "",
 			"tkgsVsphereNamespaceVmClasses": [
-				"best-effort-small",
-				"guaranteed-medium",
+				"best-effort-medium",
 				"best-effort-large",
 				"best-effort-xsmall",
-				"guaranteed-small",
-				"guaranteed-large",
-				"best-effort-medium",
-				"guaranteed-xsmall"
+				"best-effort-small"
 			],
 			"tkgsVsphereNamespaceResourceSpec": {},
 			"tkgsVsphereNamespaceStorageSpec": [
@@ -53,7 +50,7 @@
 			"tkgsVsphereWorkloadClusterSpec": {
 				"tkgsVsphereNamespaceName": "test-namespace",
 				"tkgsVsphereWorkloadClusterName": "dev-cluster",
-				"tkgsVsphereWorkloadClusterVersion": "v1.21.6+vmware.1-tkg.1",
+				"tkgsVsphereWorkloadClusterVersion": "v1.22.9+vmware.1-tkg.1.cc71bc8",
 				"allowedStorageClasses": [
 					"tanzu-gold-storage-policy"
 				],
@@ -61,28 +58,57 @@
 				"nodeStorageClass": "tanzu-gold-storage-policy",
 				"serviceCidrBlocks": "10.128.0.0/16",
 				"podCidrBlocks": "10.112.0.0/12",
-				"controlPlaneVmClass": "best-effort-medium",
-				"workerVmClass": "best-effort-medium",
+				"controlPlaneVmClass": "best-effort-small",
+				"workerVmClass": "best-effort-small",
 				"workerNodeCount": "3",
 				"enableControlPlaneHa": "false",
 				"tkgWorkloadTsmIntegration": "false",
 				"namespaceExclusions": {
 					"exactName": "",
 					"startsWith": ""
+				},
+				"tkgsWorkloadClusterGroupName": "",
+				"tkgsWorkloadEnableDataProtection": "false",
+				"tkgWorkloadClusterCredential": "",
+				"tkgWorkloadClusterBackupLocation": "",
+				"controlPlaneVolumes": [],
+				"workerVolumes": [],
+				"tkgWorkloadClusterVeleroDataProtection": {
+					"enableVelero": "false",
+					"username": "",
+					"passwordBase64": "",
+					"bucketName": "",
+					"backupRegion": "",
+					"backupS3Url": "",
+					"backupPublicUrl": ""
 				}
 			}
+		},
+		"tkgServiceConfig": {
+			"proxySpec": {
+				"enableProxy": "false",
+				"httpProxy": "",
+				"httpsProxy": "",
+				"noProxy": "",
+				"proxyCert": ""
+			},
+			"defaultCNI": "antrea",
+			"additionalTrustedCAs": {
+				"paths": [],
+				"endpointUrls": []
+			}
 		}
-	},
-	"harborSpec": {
-		"enableHarborExtension": "false",
-		"harborFqdn": "",
-		"harborPasswordBase64": "",
-		"harborCertPath": "",
-		"harborCertKeyPath": ""
 	},
 	"tanzuExtensions": {
 		"enableExtensions": "false",
 		"tkgClustersName": "",
+		"harborSpec": {
+			"enableHarborExtension": "false",
+			"harborFqdn": "",
+			"harborPasswordBase64": "",
+			"harborCertPath": "",
+			"harborCertKeyPath": ""
+		},
 		"logging": {
 			"syslogEndpoint": {
 				"enableSyslogEndpoint": "false",
@@ -98,21 +124,10 @@
 				"httpEndpointUri": "",
 				"httpEndpointHeaderKeyValue": ""
 			},
-			"elasticSearchEndpoint": {
-				"enableElasticSearchEndpoint": "false",
-				"elasticSearchEndpointAddress": "",
-				"elasticSearchEndpointPort": ""
-			},
 			"kafkaEndpoint": {
 				"enableKafkaEndpoint": "false",
 				"kafkaBrokerServiceName": "",
 				"kafkaTopicName": ""
-			},
-			"splunkEndpoint": {
-				"enableSplunkEndpoint": "false",
-				"splunkEndpointAddress": "",
-				"splunkEndpointPort": "",
-				"splunkEndpointToken": ""
 			}
 		},
 		"monitoring": {
