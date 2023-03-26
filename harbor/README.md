@@ -11,6 +11,10 @@ Configure network as follows:
 - Gateway: 192.168.128.1
 - DNS: 192.168.128.1
 
+```shell
+sudo apt install open-vm-tools vim
+```
+
 ## Install Docker
 
 Follow the instructions here: https://docs.docker.com/engine/install/ubuntu/
@@ -19,21 +23,45 @@ Follow post install instructions here: https://docs.docker.com/engine/install/li
 
 ## Install Harbor
 
-`mkdir -p /etc/docker/certs.d/harbor.tanzuathome.net`
+`sudo mkdir -p /etc/docker/certs.d/harbor.tanzuathome.net`
 
 Copy Harbor certificates as follows:
 
    - /etc/letsencrypt/live/tanzuathome.net/fullchain.pem ->  /etc/docker/certs.d/harbor.tanzuathome.net/harbor.tanzuathome.net.cert
    - /etc/letsencrypt/live/tanzuathome.net/privkey.pem -> /etc/docker/certs.d/harbor.tanzuathome.net/harbor.tanzuathome.net.key
 
+Mac:
+
+```shell
+sudo cat /etc/letsencrypt/live/tanzuathome.net/fullchain.pem
+```
+
+Harbor: 
+
+```shell
+sudo vim /etc/docker/certs.d/harbor.tanzuathome.net/harbor.tanzuathome.net.cert
+```
+
+Mac:
+
+```shell
+sudo cat /etc/letsencrypt/live/tanzuathome.net/privkey.pem
+```
+
+Harbor:
+
+```shell
+sudo vim /etc/docker/certs.d/harbor.tanzuathome.net/harbor.tanzuathome.net.key
+```
+
 Then
 
-- `mkdir /harbor /data`
+- `sudo mkdir /harbor /data`
 - `cd /harbor`
-- `curl -sLO https://github.com/goharbor/harbor/releases/download/v2.7.1/harbor-offline-installer-v2.7.1.tgz`
-- `tar xvf harbor-offline-installer-v2.7.1.tgz --strip-components=1`
-- `cp harbor.yml.tmpl harbor.yml`
-- `vim harbor.yml`
+- `sudo curl -sLO https://github.com/goharbor/harbor/releases/download/v2.7.1/harbor-offline-installer-v2.7.1.tgz`
+- `sudo tar xvf harbor-offline-installer-v2.7.1.tgz --strip-components=1`
+- `sudo cp harbor.yml.tmpl harbor.yml`
+- `sudo vim harbor.yml`
 
 Set/Update the following:
 
@@ -42,7 +70,7 @@ Set/Update the following:
   - certificate: /etc/docker/certs.d/harbor.tanzuathome.net/harbor.tanzuathome.net.cert
   - private_key: /etc/docker/certs.d/harbor.tanzuathome.net/harbor.tanzuathome.net.key
 
-`./install.sh --with-trivy`
+`sudo ./install.sh --with-trivy`
 
 ## Rotate Certificates on Harbor
 
