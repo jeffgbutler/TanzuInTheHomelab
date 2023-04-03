@@ -51,7 +51,7 @@ SSH to the machine, then...
 3. Install Kubernetes CLI: `brew install kubernetes-cli`
 4. Install Carvel tools:
    - `brew tap vmware-tanzu/carvel`
-   - `brew install ytt kapp kbld imgpkg vendir`
+   - `brew install ytt kapp kbld kctrl imgpkg vendir`
 
 Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.1/tkg-deploy-mc-21/install-cli.html
 I download the TAR on my workstation, then SFTP it to the bootstrap machine. How to SFTP:
