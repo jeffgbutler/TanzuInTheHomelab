@@ -61,6 +61,11 @@ Show the status of the claim - eventually shows a crossplane secret...
 tanzu services class-claims get my-rabbit --namespace jgb-dev
 ```
 
+Show the secret values...
+```shell
+kubectl secretdata b645ebb3-92e3-4e21-b8e1-d1d93d24bdff -n jgb-dev
+```
+
 Show the cluster...
 ```shell
 kubectl get ns | grep my-rabbit
@@ -68,11 +73,6 @@ kubectl get ns | grep my-rabbit
 
 ```shell
 kubectl get all -n my-rabbit-xxxx
-```
-
-Show the secret values...
-```shell
-kubectl secretdata 00f04jf-fgjshs -n jgb-dev
 ```
 
 Bind workloads to the service...
@@ -87,6 +87,8 @@ tanzu apps workload update spring-sensors-producer \
   --service-ref="rmq=services.apps.tanzu.vmware.com/v1alpha1:ClassClaim:my-rabbit" \
   -n jgb-dev
 ```
+
+It takes about 3 minutes to update the services.
 
 Show the service bindings
 ```shell
@@ -114,7 +116,7 @@ tanzu apps workload update spring-sensors-producer \
 
 Show the service bindings are gone
 ```shell
-kubectl get servicebinding -n jgb-dev
+watch kubectl get servicebinding -n jgb-dev
 ```
 
 Delete the claim
@@ -130,4 +132,15 @@ tanzu service class-claim list -n jgb-dev
 Show the cluster is gone as well
 ```shell
 kubectl get ns | grep my-rabbit
+```
+
+Delete the apps...
+```shell
+tanzu apps workload delete spring-sensors-consumer-web \
+  -n jgb-dev
+```
+
+```shell
+tanzu apps workload delete spring-sensors-producer \
+  -n jgb-dev
 ```
