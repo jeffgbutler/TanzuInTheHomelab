@@ -25,11 +25,36 @@ configured differently on different clusters.
    kapp -y deploy --app rmq-operator --file https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
    ```
 
-4. Services Instances provisioned and configured:
+4. Services instances provisioned and configured:
 
    ```shell
    kapp -y deploy --app rmq-service-configuration --file level3Configuration/.
    ```
+
+## Setup
+
+Deploy workloads with no service bindings. This is just to get the initial pipeline to run
+so the later steps in the demo go faster.
+
+```shell
+tanzu apps workload create spring-sensors-consumer-web \
+  --git-repo https://github.com/tanzu-end-to-end/spring-sensors \
+  --git-branch rabbit \
+  --type web \
+  --label app.kubernetes.io/part-of=spring-sensors \
+  --annotation autoscaling.knative.dev/minScale=1 \
+  -n jgb-dev
+```
+
+```shell
+tanzu apps workload create spring-sensors-producer \
+  --git-repo https://github.com/tanzu-end-to-end/spring-sensors-sensor \
+  --git-branch main \
+  --type web \
+  --label app.kubernetes.io/part-of=spring-sensors \
+  --annotation autoscaling.knative.dev/minScale=1 \
+  -n jgb-dev
+```
 
 ## Application Operator Tasks
 
@@ -80,20 +105,20 @@ tanzu services class-claims get rmq-for-sensors -n jgb-dev
 
 ## Developer Tasks
 
-Create a workload...
-
+Bind workloads to the service...
 ```shell
-tanzu apps workload create spring-sensors-consumer-web \
-  --git-repo https://github.com/tanzu-end-to-end/spring-sensors \
-  --git-branch rabbit \
-  --type web \
-  --label app.kubernetes.io/part-of=spring-sensors \
-  --annotation autoscaling.knative.dev/minScale=1 \
+tanzu apps workload update spring-sensors-consumer-web \
   --service-ref="rmq=services.apps.tanzu.vmware.com/v1alpha1:ClassClaim:rmq-for-sensors" \
   -n jgb-dev
 ```
 
-Once the workload reconciles, your should see a ServiceBinding...
+```shell
+tanzu apps workload update spring-sensors-producer \
+  --service-ref="rmq=services.apps.tanzu.vmware.com/v1alpha1:ClassClaim:rmq-for-sensors" \
+  -n jgb-dev
+```
+
+Once the workloads reconcile, your should see a ServiceBinding...
 
 ```shell
 kubectl get servicebinding.servicebinding.io/spring-sensors-consumer-web-rmq -n jgb-dev -o yaml
@@ -132,6 +157,12 @@ Remove the service binding...
 ```shell
 tanzu apps workload update spring-sensors-consumer-web \
   --service-ref="rmq-" \
+  -n jgb-dev
+```
+
+```shell
+tanzu apps workload update spring-sensors-producer \
+  --service-ref="rmq=-" \
   -n jgb-dev
 ```
 
