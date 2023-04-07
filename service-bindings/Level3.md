@@ -17,7 +17,7 @@ configured differently on different clusters.
 
 ## Pre-Requisites
 
-1. TAP cluster installed with the `run, iterate, or full` profile installed
+1. TAP cluster installed with the `run, iterate, or full` profile installed (TAP 1.4+ required)
 2. Namespace `jgb-dev`, setup as a developer namespace in TAP
 3. Rabbit MQ Cluster operator installed:
 
