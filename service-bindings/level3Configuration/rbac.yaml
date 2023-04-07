@@ -1,0 +1,10 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: rmq-reader-for-binding-and-claims
+  labels:
+    servicebinding.io/controller: "true"
+rules:
+- apiGroups: ["rabbitmq.com"]
+  resources: ["rabbitmqclusters"]
+  verbs: ["get", "list", "watch"]

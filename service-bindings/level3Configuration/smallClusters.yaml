@@ -1,0 +1,30 @@
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rmq-small-1
+  namespace: service-instances
+  labels:
+    services.apps.tanzu.vmware.com/class: rmq-small
+spec:
+  replicas: 1
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rmq-small-2
+  namespace: service-instances
+  labels:
+    services.apps.tanzu.vmware.com/class: rmq-small
+spec:
+  replicas: 1
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rmq-small-3
+  namespace: service-instances
+  labels:
+    services.apps.tanzu.vmware.com/class: rmq-small
+spec:
+  replicas: 1

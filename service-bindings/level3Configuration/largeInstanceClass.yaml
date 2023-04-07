@@ -1,0 +1,13 @@
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ClusterInstanceClass
+metadata:
+  name: rabbitmq-preprovisioned-large
+spec:
+  description:
+    short: RabbitMQ Cluster with 3 Replicas
+  pool:
+    group: rabbitmq.com
+    kind: RabbitmqCluster
+    labelSelector:
+      matchLabels:
+        services.apps.tanzu.vmware.com/class: rmq-large
