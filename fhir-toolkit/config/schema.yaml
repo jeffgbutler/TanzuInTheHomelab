@@ -1,0 +1,8 @@
+#@data/values-schema
+---
+namespace: fhir-toolkit
+ingress_domain: tap.tanzuathome.net
+fhir_host: hapi-fhir
+
+#@schema/nullable
+namespace2: ""

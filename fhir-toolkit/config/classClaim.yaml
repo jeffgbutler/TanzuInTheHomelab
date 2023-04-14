@@ -1,0 +1,10 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ClassClaim
+metadata:
+  name: hapi-postgres
+  namespace: #@ data.values.namespace
+spec:
+  classRef:
+    name: postgresql-unmanaged

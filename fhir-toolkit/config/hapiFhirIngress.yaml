@@ -1,0 +1,21 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kuard
+  namespace: #@ data.values.namespace
+  labels:
+    app: ingress
+spec:
+  rules:
+  - host: #@ data.values.fhir_host + "." + data.values.ingress_domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hapi-fhir
+            port:
+              number: 8080

@@ -1,0 +1,36 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hapi-fhir
+  name: hapi-fhir
+  namespace: #@ data.values.namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hapi-fhir
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: hapi-fhir
+    spec:
+      containers:
+        - env:
+            - name: hapi.fhir.tester.home.name
+              value: "Tanzu Hospital Tester"
+            - name: hapi.fhir.tester.home.server_address
+              value: #@ "http://" + data.values.fhir_host + "." + data.values.ingress_domain + "/fhir"
+            - name: hapi.fhir.tester.home.refuse_to_fetch_third_party_urls
+              value: "false"
+            - name: hapi.fhir.tester.home.fhir_version
+              value: "R4"
+          image: hapiproject/hapi:latest
+          name: hapi-fhir
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
