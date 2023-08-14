@@ -9,7 +9,7 @@
 			"vcenterCluster": "Workload-Cluster",
 			"vcenterDatastore": "vsanDatastore",
 			"contentLibraryName": "AVI",
-			"aviOvaName": "controller-21.1.4-2p3-9009"
+			"aviOvaName": "controller-22.1.2-9086"
 		},
 		"marketplaceSpec": {
 			"refreshToken": ""
@@ -41,6 +41,7 @@
 			"aviPasswordBase64": "Vk13YXJlMSE=",
 			"aviBackupPassphraseBase64": "Vk13YXJlMSE=",
 			"enableAviHa": "false",
+			"typeOfLicense": "enterprise",
 			"aviController01Ip": "192.168.138.9",
 			"aviController01Fqdn": "nsx-alb.tkgs.tanzuathome.net",
 			"aviController02Ip": "",

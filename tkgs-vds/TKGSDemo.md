@@ -3,7 +3,7 @@
 ## Login to the Supervisor Cluster
 
 ```shell
-kubectl vsphere login --server 192.168.139.3 -u administrator@vsphere.local --insecure-skip-tls-verify
+kubectl vsphere login --server 192.168.139.4 -u administrator@vsphere.local --insecure-skip-tls-verify
 kubectl config use-context test-namespace
 ```
 

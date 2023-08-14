@@ -23,7 +23,7 @@ This nested environment is created in two steps:
    - Mount the ISO and copy all files/directories into a directory on your disk
    - Update the `$VCSAInstallerPath` script variable with the location of the directory
    - If you are on a Mac, disable gatekeeper with a command similar to the following:
-     `sudo xattr -r -d com.apple.quarantine VMware-VCSA-all-7.0.3-19234570`
+     `sudo xattr -r -d com.apple.quarantine VMware-VCSA-all-7.0.3-21958406`
 1. NSX Advanced LoadBalancer (aka AVI Vantage)
    - Download NSX ALB from https://customerconnect.vmware.com/downloads/details?downloadGroup=NSX-ALB-10-NDC&productId=1092
    - Update the `$NSXAdvLBOVA` script variable with the location of the downloaded OVA
@@ -200,7 +200,7 @@ command: `kubectl get svc kuard`. Hit Kuard with the external-ip, for me it was 
 Setup namespace `test-namespace`. Add storage and VM classes.
 
 ```shell
-kubectl vsphere login --server 192.168.139.3 -u administrator@vsphere.local \
+kubectl vsphere login --server 192.168.139.6 -u administrator@vsphere.local \
   --insecure-skip-tls-verify
 ```
 

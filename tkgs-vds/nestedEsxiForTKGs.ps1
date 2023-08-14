@@ -9,9 +9,9 @@ $VIUsername = "administrator@vsphere.local"
 $VIPassword = "entered interactively"
 
 # Full Path to both the Nested ESXi 7.0 VA and Extracted VCSA 7.0 ISO
-$NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi7.0u3k_Appliance_Template_v1.ova"
-$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-7.0.3-21290409"
-$NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-21.1.4-2p3-9009.ova"
+$NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi7.0u3m_Appliance_Template_v1.ova"
+$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-7.0.3-21958406"
+$NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-22.1.2-9086.ova"
 
 # Nested ESXi VMs to deploy
 $NestedESXiHostnameToIPs = @{
@@ -45,7 +45,7 @@ $NSXAdvLBCombinedVIPWorkloadNetwork = "vm-network-139"
 $VMDatacenter = "Datacenter"
 $VMCluster = "LabCluster"
 $VMNetwork = "vm-network-138"
-$VMDatastore = "ssdStorage"
+$VMDatastore = "ssdVolume"
 $VMNetmask = "255.255.255.0"
 $VMGateway = "192.168.138.1"
 $VMDNS = "192.168.128.1"

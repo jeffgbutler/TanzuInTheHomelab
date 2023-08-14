@@ -7,16 +7,16 @@ spec:
   topology:
     controlPlane:
       replicas: 1
-      vmClass: guaranteed-medium
+      vmClass: best-effort-medium
       storageClass: tanzu-gold-storage-policy
       tkr:
         reference:
-          name: v1.23.8---vmware.3-tkg.1
+          name: v1.24.11---vmware.1-fips.1-tkg.1
     nodePools:
       - name: workers
         storageClass: tanzu-gold-storage-policy
-        vmClass: guaranteed-large
-        replicas: 5
+        vmClass: best-effort-medium
+        replicas: 3
         volumes:
         - name: containerd
           mountPath: /var/lib/containerd
@@ -24,7 +24,7 @@ spec:
             storage: 120Gi
         tkr:
           reference:
-            name: v1.23.8---vmware.3-tkg.1
+            name: v1.24.11---vmware.1-fips.1-tkg.1
   settings:
     storage:
       defaultClass: tanzu-gold-storage-policy
