@@ -177,12 +177,20 @@ arcas to automate the process. We'll use arcas.
    - Create a namespace called "test-namespace"
    - Create a workload cluster called "dev-cluster"
 
+### Logon to the Supervisor Cluster (Optional)
+
+```shell
+kubectl vsphere login --server 192.168.139.3 \
+  -u administrator@vsphere.local \
+  --insecure-skip-tls-verify
+```
+
 ### Test the Workload Cluster
 
 Once the workload cluster is up and running, you can find the server address by navigating to the "test-namespace"
 in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.2".
 
-```
+```shell
 kubectl vsphere login --server 192.168.139.3 --tanzu-kubernetes-cluster-namespace test-namespace \
   --tanzu-kubernetes-cluster-name dev-cluster -u administrator@vsphere.local \
   --insecure-skip-tls-verify

@@ -10,7 +10,7 @@ $VIPassword = "entered interactively"
 
 # Full Path to both the Nested ESXi 7.0 VA and Extracted VCSA 7.0 ISO
 $NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi7.0u3m_Appliance_Template_v1.ova"
-$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-7.0.3-21958406"
+$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-7.0.3-21477706"
 $NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-22.1.2-9086.ova"
 
 # Nested ESXi VMs to deploy
