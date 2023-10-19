@@ -3,7 +3,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: kuard
+  name: hapi-fhir
   namespace: #@ data.values.namespace
   labels:
     app: ingress
