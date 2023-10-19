@@ -20,6 +20,17 @@ vm-network-141 on vSphere.
 | 192.168.141.240 - 253 | NSX ALB Service Engines             | NSX ALB Configuration |
 | 192.168.141.254       | NSX ALB                             | NSX ALB OVA           |
 
+## Okta Setup
+
+Follow instructions for setting up my Okta account (dev-237174) here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.6/vmware-tanzu-kubernetes-grid-16/GUID-iam-configure-id-mgmt.html
+
+Issuer URL: https://dev-237174.okta.com/
+Client ID: xxx
+Client Secret: xxx
+Scopes: email
+Username claim: email
+Groups claim: groups
+
 ## Install NSX ALB
 
 1. Download the NSX ALB OVA from https://portal.avipulse.vmware.com/software/vantage
@@ -78,6 +89,8 @@ to fix it.
 1. Login to the Edge router and reserve the Management control plane DHCP address (https://192.168.128.1)
 
 After this, we will use SSH to the bootstrap machine for all other operations.
+
+Complete OIDC/Okta setup as specified here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.1/tkg-deploy-mc-21/mgmt-iam-configure-id-mgmt.html#complete-config
 
 ## Trust Private CA (Optional)
 If your root CA is private and not trusted by TKG, then we need to configure the infrastructure to 
