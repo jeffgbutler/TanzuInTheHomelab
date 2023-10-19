@@ -1,0 +1,13 @@
+apiVersion: "config.apps.tanzu.vmware.com/v1alpha4"
+kind: ConfigurationSlice
+metadata:
+  name: cook-config-slice
+  namespace: jgb-dev
+spec:
+  configurationSource: cook-config-source
+  interval: 1m0s
+  content:
+  - cook/default
+  - cook/production
+  - dessert/default/tap
+  - secretmenu/default/tap

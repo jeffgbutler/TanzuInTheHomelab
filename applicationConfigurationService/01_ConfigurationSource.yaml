@@ -1,0 +1,9 @@
+apiVersion: "config.apps.tanzu.vmware.com/v1alpha4"
+kind: ConfigurationSource
+metadata:
+  name: cook-config-source
+  namespace: jgb-dev
+spec:
+  backends:
+    - type: git
+      uri: https://github.com/jeffgbutler/cook-config
