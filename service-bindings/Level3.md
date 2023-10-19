@@ -8,11 +8,11 @@ a pre-provisioned service instance from a pool.
 
 An application operator could create the `ClassClaim` to relieve the infrastructure burden from the developers.
 
-A distinct advantage of this claim is that the name of the claim does not need to match the name of the
-claimed resource. This allows us to create different pools of resources in different environments. For example,
-on a development cluster we might want to use small non-persistent services for development and testing, but
-on a production cluster we would want high availability. With class claims the developer doesn't need to
-be concerned with any of this - they only need to know the name of the claim. The claim itself could be
+A distinct advantage of this claim is that the claim does not need to know the name of the claimed resource - only
+the name of a pool of resources is needed. This allows us to create different pools of resources in different
+environments. For example, on a development cluster we might want to use small non-persistent services for
+development and testing, but on a production cluster we would want high availability. With class claims the developer
+doesn't need to be concerned with any of this - they only need to know the name of the claim. The claim itself could be
 configured differently on different clusters.
 
 ## Pre-Requisites
