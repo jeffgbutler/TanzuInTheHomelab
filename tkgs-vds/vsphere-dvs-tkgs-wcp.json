@@ -9,7 +9,7 @@
 			"vcenterCluster": "Workload-Cluster",
 			"vcenterDatastore": "vsanDatastore",
 			"contentLibraryName": "AVI",
-			"aviOvaName": "controller-22.1.2-9086"
+			"aviOvaName": "controller-22.1.4-9196"
 		},
 		"marketplaceSpec": {
 			"refreshToken": ""

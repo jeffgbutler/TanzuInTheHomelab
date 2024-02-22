@@ -25,7 +25,7 @@ This nested environment is created in two steps:
    - If you are on a Mac, disable gatekeeper with a command similar to the following:
      `sudo xattr -r -d com.apple.quarantine VMware-VCSA-all-7.0.3-21958406`
 1. NSX Advanced LoadBalancer (aka AVI Vantage)
-   - Download NSX ALB from https://customerconnect.vmware.com/downloads/details?downloadGroup=NSX-ALB-10-NDC&productId=1092
+   - Download NSX ALB from https://customerconnect.vmware.com/downloads/info/slug/infrastructure_operations_management/vmware_tanzu_kubernetes_grid/2_x
    - Update the `$NSXAdvLBOVA` script variable with the location of the downloaded OVA
 
 ## Procedure Part 1: Nested Infrastructure
@@ -140,12 +140,12 @@ that are appropriate for my home lab.
 1. Select Deployment type "Enable Workload Control Plane", then select "Configure and Generate JSON"
 1. Enter the appropriate values for your installation (see `vsphere-dvs-tkgs-wcp.json` in this folder for
    an example)
-1. Once finished, save the configuration to the arcas VM. It will be saved at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json`
+1. Once finished, save the configuration to the arcas VM. It will be saved at `/home/administrator@vsphere.local/vsphere-dvs-tkgs-wcp.json`
 1. SSH into the Service Installer VM (ssh root@192.168.128.134).
 1. Run the following command:
 
    ```shell
-   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgs-wcp.json --avi_configuration --avi_wcp_configuration --enable_wcp --verbose
+   arcas --env vsphere --file /home/administrator@vsphere.local/vsphere-dvs-tkgs-wcp.json --avi_configuration --avi_wcp_configuration --enable_wcp --verbose
    ```
 
 1. Using the values I supplied, this will do the following:
@@ -163,12 +163,12 @@ arcas to automate the process. We'll use arcas.
 1. Enter the appropriate values for your installation (see `vsphere-dvs-tkgs-namespace.json` in this folder for
    an example)
 1. Once finished, save the configuration to the arcas VM. It will be saved
-   at `/opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json`
+   at `/home/administrator@vsphere.local/vsphere-dvs-tkgs-namespace.json`
 1. SSH into the Service Installer VM (ssh root@192.168.128.134).
 1. Run the following command:
 
    ```shell
-   arcas --env vsphere --file /opt/vmware/arcas/src/vsphere-dvs-tkgs-namespace.json \
+   arcas --env vsphere --file /home/administrator@vsphere.local/vsphere-dvs-tkgs-namespace.json \
       --create_supervisor_namespace --create_workload_cluster --verbose
    ```
 
@@ -188,13 +188,24 @@ kubectl vsphere login --server 192.168.139.3 \
 ### Test the Workload Cluster
 
 Once the workload cluster is up and running, you can find the server address by navigating to the "test-namespace"
-in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.2".
+in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.3".
 
 ```shell
 kubectl vsphere login --server 192.168.139.3 --tanzu-kubernetes-cluster-namespace test-namespace \
   --tanzu-kubernetes-cluster-name dev-cluster -u administrator@vsphere.local \
   --insecure-skip-tls-verify
+```
 
+For vSphere 8, and TKR 1.25 or later, we need to open up the pod security admission controller.
+Details here: https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-with-tanzu-tkg/GUID-B57DA879-89FD-4C34-8ADB-B21CB3AE67F6.html
+
+```shell
+kubectl label --overwrite ns default pod-security.kubernetes.io/enforce=privileged
+```
+
+Deploy a test pod and service...
+
+```shell
 kubectl run kuard --restart=Never --image=gcr.io/kuar-demo/kuard-amd64:blue
 
 kubectl expose pod kuard --type=LoadBalancer --port=80 --target-port=8080

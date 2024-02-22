@@ -36,14 +36,14 @@
 			"tkgsVsphereNamespaceDescription": "",
 			"tkgsVsphereNamespaceContentLibrary": "",
 			"tkgsVsphereNamespaceVmClasses": [
-				"best-effort-2xlarge",
-				"best-effort-8xlarge",
-				"best-effort-large",
-				"best-effort-small",
-				"best-effort-medium",
-				"best-effort-xlarge",
 				"best-effort-4xlarge",
-				"best-effort-xsmall"
+				"best-effort-8xlarge",
+				"best-effort-2xlarge",
+				"best-effort-xsmall",
+				"best-effort-small",
+				"best-effort-xlarge",
+				"best-effort-medium",
+				"best-effort-large"
 			],
 			"tkgsVsphereNamespaceResourceSpec": {},
 			"tkgsVsphereNamespaceStorageSpec": [
@@ -54,8 +54,8 @@
 			"tkgsVsphereWorkloadClusterSpec": {
 				"tkgsVsphereNamespaceName": "test-namespace",
 				"tkgsVsphereWorkloadClusterName": "dev-cluster",
-				"tkgsVsphereWorkloadClusterKind": "TanzuKubernetesCluster",
-				"tkgsVsphereWorkloadClusterVersion": "v1.23.8+vmware.3-tkg.1",
+				"tkgsVsphereWorkloadClusterKind": "ClusterClass",
+				"tkgsVsphereWorkloadClusterVersion": "vv1.26.5+vmware.2-fips.1-tkg.1",
 				"allowedStorageClasses": [
 					"tanzu-gold-storage-policy"
 				],
