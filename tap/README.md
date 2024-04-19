@@ -6,6 +6,23 @@
 - TAP Image Repository: harbor.tanzuathome.net/tap
 - TAP Build registry: harbor.tanzuathome.net/tap-builds
 
+### TKGM Settings
+
+CLUSTER_NAME: tap-cluster
+CLUSTER_PLAN: dev
+VSPHERE_WORKER_DISK_GIB: "200"
+VSPHERE_WORKER_MEM_MIB: "12288"
+VSPHERE_WORKER_NUM_CPUS: "4"
+WORKER_MACHINE_COUNT: "5"
+
+### TKGM Export
+
+```shell
+tanzu cluster kubeconfig get tap-cluster --admin --export-file tap-cluster-admin.kubeconfig
+
+tanzu cluster kubeconfig get tap-cluster --export-file tap-cluster-dev.kubeconfig
+```
+
 ## Bootstrap Machine
 
 Ubuntu server VM tap-bootstrap. jeff/VMware1!
@@ -17,6 +34,7 @@ sudo apt update
 sudo apt upgrade
 sudo apt install open-vm-tools
 sudo apt install git
+sudo apt install vim
 ```
 
 1. Install Docker, setup non-root access. Instructions here: https://docs.docker.com/engine/install/ubuntu/
@@ -26,16 +44,30 @@ sudo apt install git
    - `brew tap vmware-tanzu/carvel`
    - `brew install ytt kapp kbld kctrl imgpkg vendir`
 
-Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/install-tanzu-cli.html
-I download the TAR on my workstation, then SFTP it to the bootstrap machine. How to SFTP:
+Install Krew and a few useful plugins:
 
-- `sftp jeff@192.168.141.39`
-- `put /Users/jefbutler/downloads/tanzu-framework-linux-amd64-v0.25.4.5.tar`
-- `exit`
+1. Install Krew: `https://krew.sigs.k8s.io/docs/user-guide/setup/install/`
+2. `kubectl krew install tree`
+3. `kubectl krew install secretdata`
+4. `kubectl krew install get-all`
+
+Add a Kubeconfig for the tap-cluster:
+
+```shell
+export KUBECONFIG=tap-cluster-admin.kubeconfig
+```
+
+Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/install-tanzu-cli.html
+
+Then follow basic instructions from here: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/install-online-profile.html
 
 ## Relocate Images
 
-Make a library on Harbor called `tap`
+Make a project on Harbor called `tap`
+
+Login to the following registries:
+- `docker login harbor.tanzuathome.net`
+- `docker login registry.tanzu.vmware.com`
 
 Find current version...
 ```shell
@@ -48,24 +80,23 @@ Set environment variables...
 export INSTALL_REGISTRY_USERNAME=admin
 export INSTALL_REGISTRY_PASSWORD=Harbor12345
 export INSTALL_REGISTRY_HOSTNAME=harbor.tanzuathome.net
-export TAP_VERSION=1.5.1
+export TAP_VERSION=1.9.0
 export INSTALL_REPO=tap
 ```
 
-```shell
-docker login registry.tanzu.vmware.com
-```
-
-```shell
-docker login harbor.tanzuathome.net
-```
-
 Relocate images...
+
 ```shell
 imgpkg copy -b registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:${TAP_VERSION} --to-repo ${INSTALL_REGISTRY_HOSTNAME}/${INSTALL_REPO}/tap-packages
 ```
 
-## Install TAP
+## Pod Security Policies (TKGs)
+
+```shell
+kubectl create clusterrolebinding default-tkg-admin-privileged-binding --clusterrole=psp:vmware-system-privileged --group=system:authenticated
+```
+
+## Setup for TAP Install
 
 ```shell
 export KUBECONFIG=$HOME/tap-cluster-kubeconfig-admin.yaml
@@ -77,9 +108,12 @@ kubectl create ns tap-install
 
 ```shell
 tanzu secret registry add tap-registry \
-  --username ${INSTALL_REGISTRY_USERNAME} --password ${INSTALL_REGISTRY_PASSWORD} \
-  --server ${INSTALL_REGISTRY_HOSTNAME} \
-  --export-to-all-namespaces --yes --namespace tap-install
+    --server harbor.tanzuathome.net \
+    --username admin \
+    --password Harbor12345 \
+    --namespace tap-install \
+    --export-to-all-namespaces \
+    --yes
 ```
 
 ```shell
@@ -98,34 +132,55 @@ tanzu package repository add tanzu-tap-repository \
   --namespace tap-install
 ```
 
+## Install TAP
+
 ```shell
 tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file tap-values.yaml -n tap-install
 ```
+
+## Cert Manager Setup
 
 Setup cluster issuer for LetsEncrypt:
 ```shell
 kubectl apply -f cert-manager-setup.yaml
 ```
 
-Find Build Service Version...
-```shell
-tanzu package available list buildservice.tanzu.vmware.com --namespace tap-install
+Edit `tap-values.yeml` to add the key
+
+```yaml
+shared:
+  ingress_issuer: "cloudflare-cluster-issuer"
 ```
 
-Relocate build service dependenciaes...
+Then run
+
 ```shell
-imgpkg copy -b registry.tanzu.vmware.com/tanzu-application-platform/full-tbs-deps-package-repo:1.10.9 \
-  --to-repo ${INSTALL_REGISTRY_HOSTNAME}/${INSTALL_REPO}/tbs-full-deps
+tanzu package installed update tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file tap-values.yaml -n tap-install
+```
+
+
+## Install Build Service Dependencies
+
+Relocate build service dependencies...
+
+```shell
+imgpkg copy \
+  -b registry.tanzu.vmware.com/tanzu-application-platform/full-deps-package-repo:${TAP_VERSION} \
+  --to-repo ${INSTALL_REGISTRY_HOSTNAME}/${INSTALL_REPO}/tap-full-deps-packages
 ```
 
 ```shell
-tanzu package repository add tbs-full-deps-repository \
-  --url ${INSTALL_REGISTRY_HOSTNAME}/${INSTALL_REPO}/tbs-full-deps:1.10.9 \
+tanzu package repository add tap-full-deps-packages \
+  --url ${INSTALL_REGISTRY_HOSTNAME}/${INSTALL_REPO}/tap-full-deps-packages:${TAP_VERSION} \
   --namespace tap-install
 ```
 
 ```shell
-tanzu package install full-tbs-deps -p full-tbs-deps.tanzu.vmware.com -v 1.10.9 -n tap-install
+tanzu package install full-deps \
+  --package full-deps.buildservice.tanzu.vmware.com \
+  --version "> 0.0.0" \
+  --namespace tap-install \
+  --values-file tbs-full-deps-values.yaml
 ```
 
 Get IP address for ingress and setup the DNS record...
@@ -145,14 +200,24 @@ kubectl label namespaces jgb-dev apps.tanzu.vmware.com/tap-ns=""
 ```
 
 ```shell
-kubectl get secrets,serviceaccount,rolebinding,pods,workload,configmap -n jgb-dev
+kubectl get secrets,serviceaccount,rolebinding,pods,workload,configmap,limitrange -n jgb-dev
 ```
 
-Setup RBAC for a developer... (https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/namespace-provisioner-legacy-manual-namespace-setup.html#enable-additional-users-with-kubernetes-rbac-1)
+Setup RBAC for a developer... (https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/namespace-provisioner-legacy-manual-namespace-setup.html#enable-additional-users-with-kubernetes-rbac-1)
 
 ```shell
 kubectl apply -f dev-role-binding.yaml
 ```
+
+Retrieve a non-admin Kubceconfig for developer use:
+
+```shell
+tanzu cluster kubeconfig get tap-cluster --export-file tap-cluster-dev.kubeconfig
+```
+
+## Setup Scanning Supply Chain
+
+(TODO)
 
 Add Default Maven test Pipeline...
 ```shell
@@ -164,19 +229,14 @@ Add Default Scan Policy...
 kubectl apply -f scan-policy.yaml
 ```
 
-Retrieve a non-admin Kubceconfig for developer use:
-
-```shell
-tanzu cluster kubeconfig get tap-cluster --export-file tap-cluster-kubeconfig-non-admin.yaml
-```
 
 ## Setup Developer Workstation
 
-1. Install the Tanzu CLI per instructions with TAP.
+1. Install the Tanzu CLI per instructions with TAP (https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/install-tanzu-cli.html)
 2. Add the pinniped-auth plugin to the Tanzu CLI: `tanzu plugin install pinniped-auth`
 3. Merge the Kubeconfig file into .kube/config:
-   - if no other contexts, sinply copy the contents into that file
-   - else, `export KUBECONFIG=<<the file>>`, the `kubectl config view --flatten`, then copy the results into the file  
+   - if no other contexts, simply copy the contents into that file
+   - else, `export KUBECONFIG=<<the file>>`, then `kubectl config view --flatten`, then copy the results into the file  
 4. Set default namespace:
    - `kubectl config use-context tanzu-cli-tap-cluster@tap-cluster`
    - `kubectl config set-context --current --namespace=jgb-dev`
@@ -217,7 +277,7 @@ kubectl delete ns jgb-dev
 ```
 
 ```shell
-tanzu package installed delete full-tbs-deps -n tap-install
+tanzu package installed delete full-deps -n tap-install
 
 tanzu package installed delete tap -n tap-install
 ```
@@ -227,7 +287,7 @@ Uninstall package repositories...
 ```shell
 tanzu package repository delete tanzu-tap-repository -n tap-install
 
-tanzu package repository delete tbs-full-deps-repository -n tap-install
+tanzu package repository delete tap-full-deps-packages -n tap-install
 ```
 
 Delete namespaces...

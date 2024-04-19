@@ -1,0 +1,5 @@
+---
+  kp_default_repository: "harbor.tanzuathome.net/tap/build-service"
+  kp_default_repository_secret: # Takes the value from the shared section above by default, but can be overridden by setting a different value.
+    name: "tap-registry"
+    namespace: "tap-install"

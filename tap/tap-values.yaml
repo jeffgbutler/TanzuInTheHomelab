@@ -1,0 +1,53 @@
+shared:
+  ingress_domain: "tap.tanzuathome.net"
+  ingress_issuer: "cloudflare-cluster-issuer"
+
+  image_registry:
+    project_path: "harbor.tanzuathome.net/tap-builds"
+    secret:
+      name: "tap-registry"
+      namespace: "tap-install"
+
+  kubernetes_version: "1.28" # Required regardless of distribution when Kubernetes version is 1.25 or later.
+
+ceip_policy_disclosed: true # Installation fails if this is not set to true. Not a string.
+
+#The above keys are minimum numbers of entries needed in tap-values.yaml to get a functioning TAP Full profile installation.
+
+#Below are the keys which may have default values set, but can be overridden.
+
+profile: full # Can take iterate, build, run, view.
+
+supply_chain: basic # Can take testing, testing_scanning.
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer # This is set by default, but can be overridden by setting a different value.
+
+buildservice:
+  kp_default_repository: "harbor.tanzuathome.net/tap/build-service"
+  kp_default_repository_secret: # Takes the value from the shared section above by default, but can be overridden by setting a different value.
+    name: "tap-registry"
+    namespace: "tap-install"
+  exclude_dependencies: true
+
+tap_gui:
+  metadataStoreAutoconfiguration: true # Creates a service account, the Kubernetes control plane token and the requisite app_config block to enable communications between Tanzu Developer Portal and SCST - Store.
+  app_config:
+    auth:
+      allowGuestAccess: true  # This allows unauthenticated users to log in to your portal. If you want to deactivate it, make sure you configure an alternative auth provider.
+    catalog:
+      locations:
+        - type: url
+          target: https://github.com/jeffgbutler/tdp-blank-catalog/blob/main/catalog-info.yaml
+
+metadata_store:
+  ns_for_export_app_cert: "*" # Verify this namespace is available within your cluster before initiating the Tanzu Application Platform installation.
+  app_service_type: ClusterIP # Defaults to LoadBalancer. If shared.ingress_domain is set earlier, this must be set to ClusterIP.
+
+policy:
+  tuf_enabled: false # By default, TUF initialization and keyless verification are deactivated.
+
+namespace_provisioner:
+  controller: true
