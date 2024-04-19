@@ -8,12 +8,14 @@
 
 ### TKGM Settings
 
+```shell
 CLUSTER_NAME: tap-cluster
 CLUSTER_PLAN: dev
 VSPHERE_WORKER_DISK_GIB: "200"
 VSPHERE_WORKER_MEM_MIB: "12288"
 VSPHERE_WORKER_NUM_CPUS: "4"
 WORKER_MACHINE_COUNT: "5"
+```
 
 ### TKGM Export
 
@@ -46,7 +48,7 @@ sudo apt install vim
 
 Install Krew and a few useful plugins:
 
-1. Install Krew: `https://krew.sigs.k8s.io/docs/user-guide/setup/install/`
+1. Install Krew: https://krew.sigs.k8s.io/docs/user-guide/setup/install/
 2. `kubectl krew install tree`
 3. `kubectl krew install secretdata`
 4. `kubectl krew install get-all`
@@ -96,7 +98,7 @@ imgpkg copy -b registry.tanzu.vmware.com/tanzu-application-platform/tap-packages
 kubectl create clusterrolebinding default-tkg-admin-privileged-binding --clusterrole=psp:vmware-system-privileged --group=system:authenticated
 ```
 
-## Setup for TAP Install
+## Install TAP
 
 ```shell
 export KUBECONFIG=$HOME/tap-cluster-kubeconfig-admin.yaml
@@ -132,8 +134,6 @@ tanzu package repository add tanzu-tap-repository \
   --namespace tap-install
 ```
 
-## Install TAP
-
 ```shell
 tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file tap-values.yaml -n tap-install
 ```
@@ -141,11 +141,12 @@ tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file 
 ## Cert Manager Setup
 
 Setup cluster issuer for LetsEncrypt:
+
 ```shell
 kubectl apply -f cert-manager-setup.yaml
 ```
 
-Edit `tap-values.yeml` to add the key
+Edit `tap-values.yaml` to add the key
 
 ```yaml
 shared:
@@ -183,11 +184,15 @@ tanzu package install full-deps \
   --values-file tbs-full-deps-values.yaml
 ```
 
-Get IP address for ingress and setup the DNS record...
+## Setup DNS
+
+Get IP address for ingress...
 
 ```shell
 kubectl get svc -n tanzu-system-ingress
 ```
+
+Setup DNS A record "*.tap.tanzuathome.net"
 
 ## Dev Namespace Provision
 
@@ -240,7 +245,6 @@ kubectl apply -f scan-policy.yaml
 4. Set default namespace:
    - `kubectl config use-context tanzu-cli-tap-cluster@tap-cluster`
    - `kubectl config set-context --current --namespace=jgb-dev`
-
 
 ```shell
 tanzu apps workload create java-payment-calculator \
