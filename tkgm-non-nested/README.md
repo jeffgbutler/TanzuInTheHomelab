@@ -22,12 +22,12 @@ vm-network-141 on vSphere.
 
 ## Okta Setup
 
-Follow instructions for setting up my Okta account (dev-237174) here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.6/vmware-tanzu-kubernetes-grid-16/GUID-iam-configure-id-mgmt.html
+Follow instructions for setting up my Okta account (dev-237174) here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.5/tkg-deploy-mc/mgmt-iam-configure-id-mgmt.html
 
-Issuer URL: https://dev-237174.okta.com/
+Issuer URL: https://dev-237174.okta.com
 Client ID: xxx
 Client Secret: xxx
-Scopes: email
+Scopes: openid,email,groups
 Username claim: email
 Groups claim: groups
 
@@ -37,7 +37,7 @@ Groups claim: groups
 1. Upload the OVA, set the static IP address to 192.168.141.254
 1. Power on the OVA and navigate to https://nsx-alb.tkgm.tanzuathome.net
 1. Set password admin/VMware1!
-1. Follow the instructions here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.1/tkg-deploy-mc-21/mgmt-reqs-network-nsx-alb-install.html
+1. Follow the instructions here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.5/tkg-deploy-mc/mgmt-reqs-network-nsx-alb-install.html
 
 Make sure to set the DNS server to 192.168.128.1!!!
 
@@ -52,7 +52,7 @@ Access the VM through VMware remote console, then install ssh for future use:
    - `sudo apt install openssh-server`
    - `sudo ufw allow ssh`
 
-Reserve DHCP address for the bootstrap machine (192.168.141.10 in my case).
+Reserve DHCP address for the bootstrap machine (192.168.141.91 in my case).
 
 
 SSH to the machine, then...
@@ -64,12 +64,7 @@ SSH to the machine, then...
    - `brew tap vmware-tanzu/carvel`
    - `brew install ytt kapp kbld kctrl imgpkg vendir`
 
-Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.1/tkg-deploy-mc-21/install-cli.html
-I download the TAR on my workstation, then SFTP it to the bootstrap machine. How to SFTP:
-
-- `sftp jeff@192.168.141.16`
-- `put /Users/jefbutler/downloads/tanzu-cli-bundle-linux-amd64.tar.gz`
-- `exit`
+Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.5/tkg-deploy-mc/install-cli.html
 
 Make an RSA key for use during the TKGM install:
 
@@ -90,7 +85,8 @@ to fix it.
 
 After this, we will use SSH to the bootstrap machine for all other operations.
 
-Complete OIDC/Okta setup as specified here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.1/tkg-deploy-mc-21/mgmt-iam-configure-id-mgmt.html#complete-config
+Complete OIDC/Okta setup as specified here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.5/tkg-deploy-mc/mgmt-iam-configure-id-mgmt.html#complete-the-configuration-of-identity-management-4
+
 
 ## Trust Private CA (Optional)
 If your root CA is private and not trusted by TKG, then we need to configure the infrastructure to 
