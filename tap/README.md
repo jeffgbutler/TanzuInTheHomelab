@@ -211,29 +211,29 @@ kubectl get secrets,serviceaccount,rolebinding,pods,workload,configmap,limitrang
 Setup RBAC for a developer... (https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/namespace-provisioner-legacy-manual-namespace-setup.html#enable-additional-users-with-kubernetes-rbac-1)
 
 ```shell
-kubectl apply -f dev-role-binding.yaml
+kubectl apply -f dev-role-binding.yaml -n jgb-dev
 ```
+
+
+### Setup Scanning Supply Chain
+
+Scan policy and tekton pipeline sourced from: https://github.com/vmware-tanzu/application-accelerator-samples/tree/main/ns-provisioner-samples/testing-scanning-supplychain-polyglot, but modified to make them default
+
+```shell
+kubectl apply -f scanpolicy-grype-lax.yaml -n jgb-dev
+
+kubectl apply -f tekton-pipeline-java.yaml -n jgb-dev
+
+kubectl get pipeline.tekton.dev,scanpolicies -n jgb-dev
+```
+
+### Get Developer Kubeconfig
 
 Retrieve a non-admin Kubceconfig for developer use:
 
 ```shell
 tanzu cluster kubeconfig get tap-cluster --export-file tap-cluster-dev.kubeconfig
 ```
-
-## Setup Scanning Supply Chain
-
-(TODO)
-
-Add Default Maven test Pipeline...
-```shell
-kubectl apply -f java-maven-test-pipeline.yaml
-```
-
-Add Default Scan Policy...
-```shell
-kubectl apply -f scan-policy.yaml
-```
-
 
 ## Setup Developer Workstation
 
