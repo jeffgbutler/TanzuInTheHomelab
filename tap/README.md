@@ -254,7 +254,27 @@ tanzu apps workload create java-payment-calculator \
   --label app.kubernetes.io/part-of=java-payment-calculator \
   --label apps.tanzu.vmware.com/has-tests=true \
   --annotation autoscaling.knative.dev/minScale=1 \
+  --build-env "BP_JVM_VERSION=21" \
+  --namespace jgb-dev
+```
+
+You can change to an old version riddled with CVEs with this command:
+
+```shell
+tanzu apps workload apply java-payment-calculator \
+  --git-branch "" \
+  --git-tag v1.0.0 \
   --build-env "BP_JVM_VERSION=17" \
+  --namespace jgb-dev
+```
+
+This will change back to the current version:
+
+```shell
+tanzu apps workload apply java-payment-calculator \
+  --git-branch main \
+  --git-tag "" \
+  --build-env "BP_JVM_VERSION=21" \
   --namespace jgb-dev
 ```
 
