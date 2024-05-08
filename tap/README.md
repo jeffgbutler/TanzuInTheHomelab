@@ -76,6 +76,12 @@ Find current version...
 imgpkg tag list -i registry.tanzu.vmware.com/tanzu-application-platform/tap-packages | grep -v sha | sort -V
 ```
 
+If you want to exclude pre-release versions, use this command:
+
+```shell
+imgpkg tag list -i registry.tanzu.vmware.com/tanzu-application-platform/tap-packages | grep -v -E 'build|rc|sha' | sort -V
+```
+
 Set environment variables...
 
 ```shell
@@ -217,13 +223,11 @@ kubectl apply -f dev-role-binding.yaml -n jgb-dev
 
 ### Setup Scanning Supply Chain
 
-Scan policy and tekton pipeline sourced from: https://github.com/vmware-tanzu/application-accelerator-samples/tree/main/ns-provisioner-samples/testing-scanning-supplychain-polyglot, but modified to make them default
+Instructions here: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/namespace-provisioner-ootb-supply-chain.html
+
+This should be setup with the namespace provisioner automatically. You can sheck it with the following:
 
 ```shell
-kubectl apply -f scanpolicy-grype-lax.yaml -n jgb-dev
-
-kubectl apply -f tekton-pipeline-java.yaml -n jgb-dev
-
 kubectl get pipeline.tekton.dev,scanpolicies -n jgb-dev
 ```
 
@@ -253,6 +257,9 @@ tanzu apps workload create java-payment-calculator \
   --type web \
   --label app.kubernetes.io/part-of=java-payment-calculator \
   --label apps.tanzu.vmware.com/has-tests=true \
+  --param-yaml testing_pipeline_matching_labels='{"apps.tanzu.vmware.com/language": "java"}' \
+  --param scanning_source_policy="lax-scan-policy" \
+  --param scanning_image_policy="lax-scan-policy" \
   --annotation autoscaling.knative.dev/minScale=1 \
   --build-env "BP_JVM_VERSION=21" \
   --namespace jgb-dev
@@ -285,6 +292,9 @@ tanzu apps workload create tanzu-java-web-app \
   --type web \
   --label app.kubernetes.io/part-of=tanzu-java-web-app \
   --label apps.tanzu.vmware.com/has-tests=true \
+  --param-yaml testing_pipeline_matching_labels='{"apps.tanzu.vmware.com/language": "java"}' \
+  --param scanning_source_policy="lax-scan-policy" \
+  --param scanning_image_policy="lax-scan-policy" \
   --annotation autoscaling.knative.dev/minScale=1 \
   --build-env "BP_JVM_VERSION=17" \
   --namespace jgb-dev

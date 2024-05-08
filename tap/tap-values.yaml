@@ -51,3 +51,8 @@ policy:
 
 namespace_provisioner:
   controller: true
+  additional_sources:
+  - git:
+      ref: origin/main
+      subPath: ns-provisioner-samples/testing-scanning-supplychain-polyglot
+      url: https://github.com/vmware-tanzu/application-accelerator-samples.git
