@@ -45,6 +45,9 @@ sudo apt install vim
 4. Install Carvel tools:
    - `brew tap vmware-tanzu/carvel`
    - `brew install ytt kapp kbld kctrl imgpkg vendir`
+5. Install Kpack CLI:
+   - `brew tap vmware-tanzu/kpack-cli`
+   - `brew install kp`
 
 Install Krew and a few useful plugins:
 
