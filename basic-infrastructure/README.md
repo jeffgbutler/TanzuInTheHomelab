@@ -2,7 +2,7 @@
 
 The nested environments use VLANs for isolation. They also require a larger MTU than default. Here's what to change...
 
-## Router/Switch
+## Router/Switch Setup
 
 | Item     | VLAN | IP Address       | MTU  |
 |----------|------|------------------|------|
@@ -22,7 +22,7 @@ Switch VLAN Configuration:
 | eth3 | 128  | 138,139,140,141 |
 | eth4 | 128  | 138,139,140,141 |
 
-## vCenter
+## vCenter Network Setup
 
 1. Configure vSwitch0 for MTU 1600, allow Promiscuous Mode, Allow Forged Transmits
 2. Configure vmk0 for MTU 1600
@@ -35,3 +35,6 @@ Switch VLAN Configuration:
    | vm-network-140 | 140     |
    | vm-network-141 | 141     |
 
+## vCenter Storage Setup
+
+Mark the ssdVolume as flash: host > Configure > Storage Devices
