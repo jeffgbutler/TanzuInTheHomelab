@@ -62,7 +62,7 @@ Add a Kubeconfig for the tap-cluster:
 export KUBECONFIG=tap-cluster-admin.kubeconfig
 ```
 
-Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/install-tanzu-cli.html
+Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.10/tap/install-tanzu-cli.html
 
 Then follow basic instructions from here: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.9/tap/install-online-profile.html
 
