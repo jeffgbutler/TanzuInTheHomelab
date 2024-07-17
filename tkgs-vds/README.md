@@ -16,16 +16,18 @@ This nested environment is created in two steps:
 ### Downloads
 
 1. ESXi
-   - Download the latest nested ESXi appliance from William Lam: https://williamlam.com/nested-virtualization/nested-esxi-virtual-appliance
-   - Update the `$NestedESXiApplianceOVA` script variable with the location of the downloaded OVA
+   - Download the latest nested ESXi appliance from Broadcom Flings: https://community.broadcom.com/flings/home
+   - Unzip the file, then package an ova using ovftool. For example:
+     `ovftool ~/NestedESXI/Nested_ESXi8.0u3_Appliance_Template_v1/Nested_ESXi8.0u3_Appliance_Template_v1.ovf ~/NestedESXI/Nested_ESXi8.0u3_Appliance_Template_v1.ova`
+   - Update the `$NestedESXiApplianceOVA` script variable with the location of the OVA
 1. vCenter
-   - Download the vCenter server appliance ISO from my.vmware.com or buildweb.vmware.com (internal)
+   - Download the vCenter server appliance ISO from https://support.broadcom.com/group/ecx/all-products or buildweb.vmware.com (internal)
    - Mount the ISO and copy all files/directories into a directory on your disk
    - Update the `$VCSAInstallerPath` script variable with the location of the directory
    - If you are on a Mac, disable gatekeeper with a command similar to the following:
      `sudo xattr -r -d com.apple.quarantine VMware-VCSA-all-7.0.3-21958406`
 1. NSX Advanced LoadBalancer (aka AVI Vantage)
-   - Download NSX ALB from https://customerconnect.vmware.com/downloads/info/slug/infrastructure_operations_management/vmware_tanzu_kubernetes_grid/2_x
+   - Download NSX ALB from https://portal.avipulse.vmware.com/software/vantage
    - Update the `$NSXAdvLBOVA` script variable with the location of the downloaded OVA
 
 ## Procedure Part 1: Nested Infrastructure
@@ -96,7 +98,7 @@ networks in use. The table below shows the network design for TKGs in my home la
 | Management   | Supervisor-Management-Network | Start of 5 Address Range     | 192.168.138.190     |
 | VIP (Data)   | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
 | Workload     | Workload-VIP-Network          | Workload Network Range       | 192.168.139.128-254 |
-| K8S Internal | N/A                           | Supervisor Service CIDR      | 10.96.0.0/22        |
+| K8S Internal | N/A                           | Supervisor Service CIDR      | 10.96.0.0/23        |
 | K8S Internal | N/A                           | POD CIDR                     | 10.112.0.0/12       |
 | K8S Internal | N/A                           | Service CIDR                 | 10.128.0.0/16       |
 
@@ -180,7 +182,7 @@ arcas to automate the process. We'll use arcas.
 ### Logon to the Supervisor Cluster (Optional)
 
 ```shell
-kubectl vsphere login --server 192.168.139.3 \
+kubectl vsphere login --server 192.168.139.6 \
   -u administrator@vsphere.local \
   --insecure-skip-tls-verify
 ```
@@ -188,10 +190,10 @@ kubectl vsphere login --server 192.168.139.3 \
 ### Test the Workload Cluster
 
 Once the workload cluster is up and running, you can find the server address by navigating to the "test-namespace"
-in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.3".
+in workload management, then copy the link to the CLI tools. For me it was "https://192.168.139.6".
 
 ```shell
-kubectl vsphere login --server 192.168.139.3 --tanzu-kubernetes-cluster-namespace test-namespace \
+kubectl vsphere login --server 192.168.139.6 --tanzu-kubernetes-cluster-namespace test-namespace \
   --tanzu-kubernetes-cluster-name dev-cluster -u administrator@vsphere.local \
   --insecure-skip-tls-verify
 ```

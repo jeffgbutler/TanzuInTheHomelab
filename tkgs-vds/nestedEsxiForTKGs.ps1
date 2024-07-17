@@ -8,10 +8,16 @@ $VIServer = "vcsa.tanzuathome.net"
 $VIUsername = "administrator@vsphere.local"
 $VIPassword = "entered interactively"
 
-# Full Path to both the Nested ESXi 7.0 VA and Extracted VCSA 7.0 ISO
-$NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi8.0u2_Appliance_Template_v2.ova"
-$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-8.0.2-22617221"
-$NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-22.1.5-9093.ova"
+# Full Path to both the Nested ESXi VA and Extracted VCSA ISO
+# vSphere 8...
+$NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi8.0u3_Appliance_Template_v1.ova"
+$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-8.0.3-24022515"
+$NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-22.1.6-9191.ova"
+
+# vSphere 7...
+#$NestedESXiApplianceOVA = "/Users/jefbutler/NestedESXI/Nested_ESXi7.0u3m_Appliance_Template_v1.ova"
+#$VCSAInstallerPath = "/Users/jefbutler/NestedESXI/VMware-VCSA-all-7.0.3-21477706"
+#$NSXAdvLBOVA = "/Users/jefbutler/NestedESXI/controller-22.1.2-9086.ova"
 
 # Nested ESXi VMs to deploy
 $NestedESXiHostnameToIPs = @{
@@ -22,10 +28,10 @@ $NestedESXiHostnameToIPs = @{
 
 # Nested ESXi VM Resources
 $NestedESXivCPU = "16"
-$NestedESXiCoresPerSocket = "4"
-$NestedESXivMEM = "96" #GB
+$NestedESXiCoresPerSocket = "16"
+$NestedESXivMEM = "128" #GB
 $NestedESXiCachingvDisk = "32" #GB
-$NestedESXiCapacityvDisk = "500" #GB
+$NestedESXiCapacityvDisk = "1000" #GB
 
 # VCSA Deployment Configuration
 $VCSADeploymentSize = "small"
@@ -527,7 +533,7 @@ if($setupNewVC -eq 1) {
 
         My-Logger "Uploading AVI OVA to the new Content Library ..."
         $AVIFile = Get-Item $NSXAdvLBOVA
-        New-ContentLibraryItem -ContentLibrary (Get-ContentLibrary -Server $vc -Name "AVI") -Name $AVIFile.BaseName -Files $AVIFile.FullName | Out-File -Append -LiteralPath $verboseLogFile
+        New-ContentLibraryItem -ContentLibrary (Get-ContentLibrary -Server $vc -Name "AVI") -Name $AVIFile.BaseName -Files $AVIFile.FullName -DisableOvfCertificateChecks | Out-File -Append -LiteralPath $verboseLogFile
     }
 
     My-Logger "Disconnecting from new VCSA ..."

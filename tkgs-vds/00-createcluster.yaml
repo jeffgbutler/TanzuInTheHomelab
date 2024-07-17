@@ -1,30 +1,33 @@
-apiVersion: run.tanzu.vmware.com/v1alpha2
-kind: TanzuKubernetesCluster
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
 metadata:
   name: tap-full-profile-cluster
   namespace: test-namespace
 spec:
+  clusterNetwork:
+    services:
+      cidrBlocks: ["10.128.0.0/16"]
+    pods:
+      cidrBlocks: ["10.112.0.0/12"]
   topology:
+    class: tanzukubernetescluster
+    version: v1.27.11---vmware.1-fips.1-tkg.2
     controlPlane:
       replicas: 1
-      vmClass: best-effort-medium
-      storageClass: tanzu-gold-storage-policy
-      tkr:
-        reference:
-          name: v1.24.11---vmware.1-fips.1-tkg.1
-    nodePools:
-      - name: workers
-        storageClass: tanzu-gold-storage-policy
-        vmClass: best-effort-medium
+    workers:
+      machineDeployments:
+      - class: node-pool
+        name: node-pool-1
         replicas: 3
-        volumes:
-        - name: containerd
-          mountPath: /var/lib/containerd
-          capacity:
-            storage: 120Gi
-        tkr:
-          reference:
-            name: v1.24.11---vmware.1-fips.1-tkg.1
-  settings:
-    storage:
-      defaultClass: tanzu-gold-storage-policy
+    variables:
+    - name: vmClass
+      value: guaranteed-medium
+    - name: storageClass
+      value: tanzu-gold-storage-policy
+    - name: nodePoolVolumes
+      value:
+      - name: containerd
+        capacity:
+          storage: 120Gi
+        mountPath: /var/lib/containerd
+        storageClass: tanzu-gold-storage-policy
