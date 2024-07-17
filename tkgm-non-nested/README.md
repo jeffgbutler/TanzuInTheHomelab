@@ -63,6 +63,11 @@ SSH to the machine, then...
 4. Install Carvel tools:
    - `brew tap vmware-tanzu/carvel`
    - `brew install ytt kapp kbld kctrl imgpkg vendir`
+5. Install Tanzu CLI:
+   - `brew install vmware-tanzu/tanzu/tanzu-cli`
+   - `tanzu plugin group get vmware-tkg/default:v2.4.1`
+   - `tanzu plugin install --group vmware-tkg/default:v2.4.1`
+   - `tanzu plugin list`
 
 Install Tanzu CLI following instructions here: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/2.5/tkg-deploy-mc/install-cli.html
 
