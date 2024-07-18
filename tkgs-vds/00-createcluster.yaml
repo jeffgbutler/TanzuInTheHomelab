@@ -1,7 +1,7 @@
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
-  name: tap-full-profile-cluster
+  name: dev-cluster
   namespace: test-namespace
 spec:
   clusterNetwork:
@@ -11,7 +11,7 @@ spec:
       cidrBlocks: ["10.112.0.0/12"]
   topology:
     class: tanzukubernetescluster
-    version: v1.27.11---vmware.1-fips.1-tkg.2
+    version: v1.28.8---vmware.1-fips.1-tkg.2
     controlPlane:
       replicas: 1
     workers:
@@ -28,6 +28,6 @@ spec:
       value:
       - name: containerd
         capacity:
-          storage: 120Gi
+          storage: 60Gi
         mountPath: /var/lib/containerd
         storageClass: tanzu-gold-storage-policy

@@ -1,0 +1,55 @@
+{
+  "specVersion": "1.0",
+  "supervisorSpec": {
+    "supervisorName": "TKGS-Supervisor"
+  },
+  "envSpec": {
+    "vcenterDetails": {
+      "vcenterAddress": "vcsa.tkgs.tanzuathome.net",
+      "vcenterCluster": "Workload-Cluster"
+    }
+  },
+  "tkgsComponentSpec": {
+    "tkgsStoragePolicySpec": {
+      "masterStoragePolicy": "tanzu-gold-storage-policy",
+      "imageStoragePolicy": "tanzu-gold-storage-policy",
+      "ephemeralStoragePolicy": "tanzu-gold-storage-policy"
+    },
+    "aviComponents": {
+      "aviName": "nsx-alb",
+      "aviUsername": "admin",
+      "aviController01Ip": "nsx-alb.tkgs.tanzuathome.net:443",
+      "aviCertAuthorityChain": "-----BEGIN CERTIFICATE-----\nMIIDDTCCAfWgAwIBAgIUUG0LaaRaJeuyD/GnZ+ra02hBKmEwDQYJKoZIhvcNAQEL\nBQAwJzElMCMGA1UEAwwcbnN4LWFsYi50a2dzLnRhbnp1YXRob21lLm5ldDAeFw0y\nNDA3MTcyMTQzMDZaFw0yNTA3MTcyMTQzMDZaMCcxJTAjBgNVBAMMHG5zeC1hbGIu\ndGtncy50YW56dWF0aG9tZS5uZXQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK\nAoIBAQDZGedoStHPkG/06Wz0+56WB+Yl6IxuqoxHX2q3adpnD3Q51gizYHLh4dJn\n+2NlSR2C4UQATpZtsKcLkvSNO76OgaHOSC4/F9GsrlberXdqs2M5aEoeZMfPvXro\n2ZqBoSaTqqjPnAAvADQ/SvmZCZMLeNd9h6he37zEO1NsKCLiaZoGR9t7WGj4kq9C\n7vuLiyUYg1B1J8FOa9k3bh2YIjnp/j6tJ5TvAC6OXLSDy5qZydrRGKMGlaC5FWxY\n6u0oC6STETHXdggMBZz6RwGhjDewDi//bN60sYCMJb8mPHkPjtgp13xKc89puM97\nPSuHm3H3RIc75I6weVin+03a7hs9AgMBAAGjMTAvMC0GA1UdEQQmMCSCHG5zeC1h\nbGIudGtncy50YW56dWF0aG9tZS5uZXSHBMCoigkwDQYJKoZIhvcNAQELBQADggEB\nAKNFYQDkSvXxm0p+qJF3Zcq4N5PfIZkyAdNY9B9ugNkzLjvhhy4muTJialVIkM1W\nXnU0cyYarlEYRVzgbKqCXrhRZ9Wx6ONOS8ABlvgWmGkpH+uHkIrYLL9T0zqdxZ/4\nSNBbNhWE7XUtB4Sm+cZAo92QC4mHNG1e4gcdr/ES7iUS7BhX4XYA3LU1No44TiBk\nx+WGzgwM9EtNBh3EPlkKuRMMIFQ8izsvFoyI7LJfXHG8IEpvuQlOXUmqScz8zR4d\n743o+dKdqYNngWOuOs32vm2QadQAQ8JAaQUx079ROHbmCzM14NKA4D8PBZK/azRB\niPEtRVdnoYejRRlB1tbUjw4=\n-----END CERTIFICATE-----\n"
+    },
+    "tkgsMgmtNetworkSpec": {
+      "tkgsMgmtNetworkName": "Supervisor-Management-Network",
+      "tkgsMgmtIpAssignmentMode": "STATICRANGE",
+      "tkgsMgmtNetworkStartingIp": "192.168.138.190",
+      "tkgsMgmtNetworkGatewayCidr": "192.168.138.1/24",
+      "tkgsMgmtNetworkDnsServers": [
+        "192.168.128.1"
+      ],
+      "tkgsMgmtNetworkSearchDomains": [],
+      "tkgsMgmtNetworkNtpServers": [
+        "pool.ntp.org"
+      ]
+    },
+    "tkgsPrimaryWorkloadNetwork": {
+      "tkgsPrimaryWorkloadNetworkName": "network-1",
+      "tkgsPrimaryWorkloadIpAssignmentMode": "STATICRANGE",
+      "tkgsPrimaryWorkloadPortgroupName": "Workload-VIP-Network",
+      "tkgsPrimaryWorkloadNetworkGatewayCidr": "192.168.139.1/24",
+      "tkgsPrimaryWorkloadNetworkStartRange": "192.168.139.128",
+      "tkgsPrimaryWorkloadNetworkEndRange": "192.168.139.254",
+      "tkgsWorkloadDnsServers": [
+        "192.168.128.1"
+      ],
+      "tkgsWorkloadNtpServers": [
+        "pool.ntp.org"
+      ],
+      "tkgsWorkloadServiceCidr": "10.96.0.0/23"
+    },
+    "apiServerDnsNames": [],
+    "controlPlaneSize": "SMALL"
+  }
+}
