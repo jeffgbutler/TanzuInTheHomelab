@@ -1,7 +1,8 @@
 # Powershell Notes
 
 Scripts in this repository use Powershell and the VMware PowerCLI plugin. More information
-about PowerCLI is here: https://developer.vmware.com/powercli
+about PowerCLI is here: https://developer.broadcom.com/powercli
+
 
 
 ## Basic Check
