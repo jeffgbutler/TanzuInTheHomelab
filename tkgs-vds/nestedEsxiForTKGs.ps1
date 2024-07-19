@@ -1,4 +1,4 @@
-# Script to install a neseted vCenter and EXSi to prepare for TKGs installation with Tanzu Service Installer
+# Script to install a neseted vCenter and EXSi to prepare for TKGs installation
 #
 # Adapted from the original by William Lam (www.williamlam.com)
 # Author: Jeff Butler
@@ -351,19 +351,19 @@ if($deployVCSA -eq 1) {
 
     if($IsWindows) {
         My-Logger "Creating VCSA JSON Configuration file for deployment ..."
-        $config | ConvertTo-Json | Set-Content -Path "$($ENV:Temp)\jsontemplate.json"
+        $config | ConvertTo-Json -WarningAction Ignore | Set-Content -Path "$($ENV:Temp)\jsontemplate.json"
 
         My-Logger "Deploying the VCSA (Windows) ..."
         Invoke-Expression "$($VCSAInstallerPath)\vcsa-cli-installer\win32\vcsa-deploy.exe install --no-esx-ssl-verify --no-ssl-certificate-verification --accept-eula --acknowledge-ceip $($ENV:Temp)\jsontemplate.json"| Out-File -Append -LiteralPath $verboseLogFile
     } elseif($IsMacOS) {
         My-Logger "Creating VCSA JSON Configuration file for deployment ..."
-        $config | ConvertTo-Json | Set-Content -Path "$($ENV:TMPDIR)jsontemplate.json"
+        $config | ConvertTo-Json -WarningAction Ignore | Set-Content -Path "$($ENV:TMPDIR)jsontemplate.json"
 
         My-Logger "Deploying the VCSA (Mac) ..."
         Invoke-Expression "$($VCSAInstallerPath)/vcsa-cli-installer/mac/vcsa-deploy install --no-esx-ssl-verify --no-ssl-certificate-verification --accept-eula --acknowledge-ceip $($ENV:TMPDIR)jsontemplate.json"| Out-File -Append -LiteralPath $verboseLogFile
     } elseif ($IsLinux) {
         My-Logger "Creating VCSA JSON Configuration file for deployment ..."
-        $config | ConvertTo-Json | Set-Content -Path "/tmp/jsontemplate.json"
+        $config | ConvertTo-Json -WarningAction Ignore | Set-Content -Path "/tmp/jsontemplate.json"
 
         My-Logger "Deploying the VCSA (Linux) ..."
         Invoke-Expression "$($VCSAInstallerPath)/vcsa-cli-installer/lin64/vcsa-deploy install --no-esx-ssl-verify --no-ssl-certificate-verification --accept-eula --acknowledge-ceip /tmp/jsontemplate.json"| Out-File -Append -LiteralPath $verboseLogFile
