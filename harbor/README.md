@@ -2,7 +2,7 @@
 
 ## VM Setup
 
-Create a VM with 8 vCPU, 16GB RAM, 160 GB Disk using Ubuntu Server (minimal)
+Create a VM with 8 vCPU, 16GB RAM, 512 GB Disk using Ubuntu Server (minimal)
 
 Configure network as follows:
 

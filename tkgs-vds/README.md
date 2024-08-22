@@ -74,20 +74,39 @@ When designing a Kubernetes environment it is also important to be mindful for t
 a Kubernetes cluster - those networks cannot overlap each other, and should not overlap with other
 networks in use. The table below shows the network design for TKGs in my home lab:
 
-| Network      | vSphere Port Group            | Item                         | IP or Range         |
-|--------------|-------------------------------|------------------------------|---------------------|
-| Management   | Supervisor-Management-Network | vcsa.tkgs.tanzuathome.net    | 192.168.138.3       |
-| Management   | Supervisor-Management-Network | esxi-1.tkgs.tanzuathome.net  | 192.168.138.4       |
-| Management   | Supervisor-Management-Network | esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
-| Management   | Supervisor-Management-Network | esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
-| Management   | Supervisor-Management-Network | nsx-alb.tkgs.tanzuathome.net | 192.168.138.9       |
-| Management   | Supervisor-Management-Network | NSX Service Engines          | 192.168.138.180-187 |
-| Management   | Supervisor-Management-Network | Start of 5 Address Range     | 192.168.138.190     |
-| VIP (Data)   | Workload-VIP-Network          | VIP Network Range            | 192.168.139.2-126   |
-| Workload     | Workload-VIP-Network          | Workload Network Range       | 192.168.139.128-254 |
-| K8S Internal | N/A                           | Supervisor Service CIDR      | 10.96.0.0/23        |
-| K8S Internal | N/A                           | POD CIDR                     | 10.112.0.0/12       |
-| K8S Internal | N/A                           | Service CIDR                 | 10.128.0.0/16       |
+2 Network Configuration:
+
+| Network      | vSphere Port Group            | Item                              | IP or Range         |
+|--------------|-------------------------------|-----------------------------------|---------------------|
+| Management   | Supervisor-Management-Network | vcsa.tkgs.tanzuathome.net         | 192.168.138.3       |
+| Management   | Supervisor-Management-Network | tkgs-esxi-1.tkgs.tanzuathome.net  | 192.168.138.4       |
+| Management   | Supervisor-Management-Network | tkgs-esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
+| Management   | Supervisor-Management-Network | tkgs-esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
+| Management   | Supervisor-Management-Network | nsx-alb.tkgs.tanzuathome.net      | 192.168.138.9       |
+| Management   | Supervisor-Management-Network | NSX Service Engines               | 192.168.138.180-187 |
+| Management   | Supervisor-Management-Network | Start of 5 Address Range          | 192.168.138.190     |
+| VIP (Data)   | Workload-VIP-Network          | VIP Network Range                 | 192.168.139.2-126   |
+| Workload     | Workload-VIP-Network          | Workload Network Range            | 192.168.139.128-254 |
+| K8S Internal | N/A                           | Supervisor Service CIDR           | 10.96.0.0/23        |
+| K8S Internal | N/A                           | POD CIDR                          | 10.128.0.0/16       |
+| K8S Internal | N/A                           | Service CIDR                      | 10.129.0.0/16       |
+
+3 Network Configuration:
+
+| Network      | vSphere Port Group | Item                              | IP or Range         |
+|--------------|--------------------|-----------------------------------|---------------------|
+| Management   | mgmt-vlan138       | vcsa.tkgs.tanzuathome.net         | 192.168.138.3       |
+| Management   | mgmt-vlan138       | tkgs-esxi-1.tkgs.tanzuathome.net  | 192.168.138.4       |
+| Management   | mgmt-vlan138       | tkgs-esxi-2.tkgs.tanzuathome.net  | 192.168.138.5       |
+| Management   | mgmt-vlan138       | tkgs-esxi-3.tkgs.tanzuathome.net  | 192.168.138.6       |
+| Management   | mgmt-vlan138       | nsx-alb.tkgs.tanzuathome.net      | 192.168.138.9       |
+| Management   | mgmt-vlan138       | NSX Service Engines               | 192.168.138.180-187 |
+| Management   | mgmt-vlan138       | Start of 5 Address Range          | 192.168.138.190     |
+| VIP (Data)   | data-vlan139       | VIP Network Range                 | 192.168.139.2-254   |
+| Workload     | tkgs-vlan137       | Workload Network Range            | 192.168.137.2-254   |
+| K8S Internal | N/A                | Supervisor Service CIDR           | 10.96.0.0/23        |
+| K8S Internal | N/A                | POD CIDR                          | 10.128.0.0/16       |
+| K8S Internal | N/A                | Service CIDR                      | 10.129.0.0/16       |
 
 ### Enable TKGs
 

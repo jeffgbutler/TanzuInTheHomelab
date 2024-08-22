@@ -3,18 +3,20 @@
 ## Step 1 - Setup Default Cloud
 
 - Add vSphere Credentials
-- Set management network to Supervisor-Management-Network (192.168.138.0/24) with IP Pool 192.168.138.180-192.168.138.187 (should be SE only)
+- (2 Network Version) Set management network to Supervisor-Management-Network (192.168.138.0/24) with IP Pool 192.168.138.180-192.168.138.187 (can be for SE and VIP - the default)
+- (3 Network Version) Set management network to mgmt-vlan138 (192.168.138.0/24) with IP Pool 192.168.138.180-192.168.138.187 (can be for SE and VIP - the default)
 
-## Step 2 - Setup VIP Network
+## Step 2 - Setup VIP (Data) Network
 
-- Configure Workload-VIP-Network (192.168.139.0/24) with IP Pool 192.168.139.2 - 192.168.139.126 (must be for SE and VIP - the default)
+- (2 Network Version) Configure Workload-VIP-Network (192.168.139.0/24) with IP Pool 192.168.139.2 - 192.168.139.126 (must be for SE and VIP - the default)
+- (3 Network Version) Configure data-vlan139 (192.168.139.0/24) with IP Pool 192.168.139.2 - 192.168.139.254 (must be for SE and VIP - the default)
 
 ## Step 3 - Setup IPAM Profile
 
-- Create IPAM profile and add both networks to it
+- Create IPAM profile and add the VIP (data) network to it
 - Update default cloud with the new IPAM profile
 
-## Step 4 - Static Route
+## Step 4 - Static Route to VIP (Data) Network
 
 - Add static route in global VRF context: 0.0.0.0/0 -> 192.168.139.1
 
