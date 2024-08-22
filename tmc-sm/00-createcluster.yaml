@@ -1,0 +1,35 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: tmc-sm-cluster
+  namespace: test-namespace
+spec:
+  clusterNetwork:
+    services:
+      cidrBlocks: ["10.129.0.0/16"]
+    pods:
+      cidrBlocks: ["10.128.0.0/16"]
+  topology:
+    class: tanzukubernetescluster
+    version: v1.27.11---vmware.1-fips.1-tkg.2
+    controlPlane:
+      replicas: 1
+    workers:
+      machineDeployments:
+      - class: node-pool
+        name: node-pool-1
+        replicas: 4
+    variables:
+    - name: vmClass
+      value: best-effort-large
+    - name: storageClass
+      value: tanzu-gold-storage-policy
+    - name: defaultStorageClass
+      value: tanzu-gold-storage-policy
+    - name: nodePoolVolumes
+      value:
+      - name: containerd
+        capacity:
+          storage: 80Gi
+        mountPath: /var/lib/containerd
+        storageClass: tanzu-gold-storage-policy

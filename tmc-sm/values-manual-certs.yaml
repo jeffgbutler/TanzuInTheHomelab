@@ -1,0 +1,25 @@
+harborProject: harbor.tanzuathome.net/tmc
+dnsZone: tmc.tanzuathome.net
+certificateImport: true
+postgres:
+  userPassword: VMware1!
+  maxConnections: 300
+minio:
+  username: root
+  password: VMware1!
+contourEnvoy:
+  serviceType: LoadBalancer
+oidc:
+  issuerType: pinniped
+  issuerURL: "******"
+  clientID: "******"
+  clientSecret: "******"
+trustedCAs:
+  local-ca.pem: |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+telemetry:
+  ceipOptIn: true
+  ceipAgreement: true
+size: small
